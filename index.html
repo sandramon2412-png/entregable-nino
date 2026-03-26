@@ -28,7 +28,6 @@
     min-height: 100vh;
   }
   .pf { font-family: 'Playfair Display', serif; }
-  /* ── HEADER ── */
   header {
     background: linear-gradient(160deg, var(--brown) 0%, var(--brown2) 100%);
     padding: 56px 24px 80px;
@@ -91,9 +90,7 @@
     margin-top: 16px;
     position: relative; z-index: 1;
   }
-  /* ── MAIN ── */
   main { max-width: 960px; margin: 0 auto; padding: 10px 20px 80px; }
-  /* ── SECTION TITLE ── */
   .section-title {
     display: flex; align-items: center; gap: 14px;
     margin: 48px 0 20px;
@@ -114,8 +111,7 @@
     font-weight: 700;
   }
   .section-title .line { flex: 1; height: 2px; background: var(--beige3); border-radius: 2px; }
-  /* ── CARDS ── */
- .cards {
+  .cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 280px));
     gap: 18px;
@@ -160,35 +156,27 @@
     align-self: flex-start;
   }
   .card-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
-  /* Badge */
   .badge {
     display: inline-block;
     font-size: .7rem; padding: 4px 12px; border-radius: 20px;
     font-weight: 800; align-self: flex-start;
     letter-spacing: 0.5px;
   }
-  /* ── COLOR VARIANTS ── */
   .c-green   { border-top: 4px solid var(--green);  }
   .c-gold    { border-top: 4px solid var(--gold);   }
   .c-brown   { border-top: 4px solid var(--brown2); }
   .c-rose    { border-top: 4px solid #D4907A;       }
   .c-sage    { border-top: 4px solid #9EB5A3;       }
-  .c-olive   { border-top: 4px solid #A8A87A;       }
   .bg-green  { background: var(--green);  color: white; }
   .bg-gold   { background: var(--gold);   color: white; }
   .bg-brown  { background: var(--brown2); color: white; }
   .bg-rose   { background: #D4907A;       color: white; }
   .bg-sage   { background: #7B9E87;       color: white; }
-  .bg-olive  { background: #8B8B5A;       color: white; }
-  .bg-app    { background: linear-gradient(135deg, var(--brown), var(--brown2)); color: white; }
   .badge-green  { background: #EBF4EE; color: var(--green2); }
   .badge-gold   { background: #FDF5E0; color: var(--gold2);  }
   .badge-brown  { background: #F2EBE0; color: var(--brown2); }
   .badge-rose   { background: #FCEEE8; color: #A0553A;       }
   .badge-sage   { background: #EBF4EE; color: #4A7A5C;       }
-  .badge-olive  { background: #F2F2E0; color: #6B6B3A;       }
-  .badge-app    { background: #F0EBE0; color: var(--brown);  }
-  /* ── DESTACADO ── */
   .highlight-box {
     background: linear-gradient(135deg, var(--brown), var(--brown2));
     border-radius: 22px;
@@ -222,7 +210,6 @@
     font-family: 'Nunito', sans-serif;
   }
   .highlight-box .hl-btn:hover { background: var(--gold2); transform: translateY(-2px); }
-  /* ── AUDIO ── */
   .audio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -255,7 +242,6 @@
     margin-bottom: 4px;
   }
   .audio-info audio { width: 100%; height: 28px; }
-  /* ── WELCOME BANNER ── */
   .welcome-strip {
     background: linear-gradient(135deg, var(--green), var(--green2));
     border-radius: 18px;
@@ -269,7 +255,6 @@
   .welcome-strip .ws-icon { font-size: 2rem; flex-shrink: 0; }
   .welcome-strip p { color: white; font-weight: 700; font-size: 0.95rem; line-height: 1.5; }
   .welcome-strip p span { opacity: 0.85; font-weight: 600; }
-  /* ── FOOTER ── */
   footer {
     text-align: center;
     padding: 36px 20px;
@@ -280,7 +265,6 @@
   }
   footer .footer-owl { font-size: 2rem; display: block; margin-bottom: 8px; }
   footer strong { color: var(--gold2); }
-  /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
     .highlight-box { flex-direction: column; text-align: center; }
     .welcome-strip { flex-direction: column; text-align: center; }
@@ -288,7 +272,6 @@
 </style>
 </head>
 <body>
-<!-- HEADER -->
 <header>
   <span class="owl">🦉</span>
   <h1 class="pf">Do Zero à <span>Leitura</span><br>em 90 Dias</h1>
@@ -296,18 +279,17 @@
   <div class="header-badge">🎉 Todos os seus materiais estão aqui</div>
 </header>
 <main>
-  <!-- WELCOME STRIP -->
   <div class="welcome-strip">
     <div class="ws-icon">✨</div>
     <p>Parabéns pela sua compra! Aqui você encontra o guia principal, atividades interativas, vídeos, bônus e os 20 áudios educativos. <span>Tudo organizado para você começar hoje mesmo!</span></p>
   </div>
-  <!-- PRODUTO PRINCIPAL -->
+
   <div class="section-title">
     <div class="icon">📚</div>
     <h2>Produto Principal</h2>
     <div class="line"></div>
   </div>
-  <!-- App em destaque -->
+
   <div class="highlight-box">
     <div class="hl-icon">🦉</div>
     <div>
@@ -316,7 +298,8 @@
       <a class="hl-btn" href="https://littlestar-app.vercel.app" target="_blank">▶ Abrir App Agora</a>
     </div>
   </div>
- <div class="cards">
+
+  <div class="cards">
     <a class="card c-brown" href="guia-do-zero-a-leitura-90-dias.pdf" target="_blank">
       <span class="card-emoji">📖</span>
       <span class="badge badge-brown">Guia Principal</span>
@@ -325,12 +308,12 @@
       <span class="card-btn bg-brown">📖 Abrir Guia</span>
     </a>
     <a class="card c-gold" href="https://librointeractivonin0.vercel.app" target="_blank">
-  <span class="card-emoji">✨</span>
-  <span class="badge badge-gold">Interativo</span>
-  <div class="card-title">AlphaBright Kiddo — Método de Alfabetização</div>
-  <div class="card-desc">Livro interativo completo com o método de alfabetização para aprender de forma divertida e eficaz!</div>
-  <span class="card-btn bg-gold">▶ Abrir Livro</span>
-</a>
+      <span class="card-emoji">✨</span>
+      <span class="badge badge-gold">Interativo</span>
+      <div class="card-title">AlphaBright Kiddo — Método de Alfabetização</div>
+      <div class="card-desc">Livro interativo completo com o método de alfabetização para aprender de forma divertida e eficaz!</div>
+      <span class="card-btn bg-gold">▶ Abrir Livro</span>
+    </a>
     <a class="card c-green" href="atividades-interativas.html" target="_blank">
       <span class="card-emoji">🎮</span>
       <span class="badge badge-green">App Interativo</span>
@@ -346,13 +329,14 @@
       <span class="card-btn bg-gold">▶ Ver Vídeos</span>
     </a>
   </div>
-  <!-- BÔNUS -->
+
   <div class="section-title">
     <div class="icon">🎁</div>
-    <h2>6 Bônus Exclusivos</h2>
+    <h2>5 Bônus Exclusivos</h2>
     <div class="line"></div>
   </div>
-<div class="cards">
+
+  <div class="cards">
     <a class="card c-rose" href="bonus1-planilha-de-acompanhamento.pdf" target="_blank">
       <span class="card-emoji">📊</span>
       <span class="badge badge-rose">Bônus 1</span>
@@ -389,7 +373,7 @@
       <span class="card-btn bg-green">📥 Abrir PDF</span>
     </a>
   </div>
-  <!-- ÁUDIOS -->
+
   <div class="section-title">
     <div class="icon">🎵</div>
     <h2>20 Áudios Educativos</h2>
