@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>40 Atividades Interativas — Do Zero à Leitura</title>
+<style>
+  :root {
+    --purple: #6C3FC5; --purple-light: #EEE6FF; --purple-mid: #9B72E8;
+    --yellow: #FFD600; --yellow-light: #FFFBE6;
+    --green: #2ECC71; --green-light: #E8F8F0;
+    --orange: #FF8C00; --orange-light: #FFF3E0;
+    --pink: #E91E8C; --pink-light: #FFE8F4;
+    --dark: #1A1A2E; --gray: #666; --gray-light: #F5F5F5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gray-light); color: var(--dark); }
+
+  /* HEADER */
+  header { background: linear-gradient(135deg, var(--purple), var(--purple-mid)); color: #fff; padding: 20px; text-align: center; }
+  header h1 { font-size: clamp(1.4rem, 4vw, 2rem); }
+  header p { opacity: .85; margin-top: 4px; font-size: .95rem; }
+  .stars { color: var(--yellow); font-size: 1.3rem; margin-bottom: 6px; }
+
+  /* PROGRESS BAR */
+  .progress-wrap { background: rgba(0,0,0,.2); border-radius: 20px; height: 12px; margin: 14px auto; max-width: 400px; }
+  .progress-bar { background: var(--yellow); border-radius: 20px; height: 12px; transition: width .4s; }
+  .progress-label { color: rgba(255,255,255,.9); font-size: .85rem; margin-top: 4px; }
+
+  /* FASE TABS */
+  .fase-tabs { display: flex; gap: 8px; padding: 16px; overflow-x: auto; background: #fff; border-bottom: 2px solid #eee; }
+  .fase-tab { flex-shrink: 0; padding: 8px 18px; border-radius: 20px; border: none; cursor: pointer; font-size: .9rem; font-weight: 700; transition: all .2s; }
+  .fase-tab.f1 { background: var(--purple-light); color: var(--purple); }
+  .fase-tab.f2 { background: var(--green-light); color: var(--green); }
+  .fase-tab.f3 { background: var(--orange-light); color: var(--orange); }
+  .fase-tab.f4 { background: var(--pink-light); color: var(--pink); }
+  .fase-tab.active { color: #fff; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+  .fase-tab.f1.active { background: var(--purple); }
+  .fase-tab.f2.active { background: var(--green); }
+  .fase-tab.f3.active { background: var(--orange); }
+  .fase-tab.f4.active { background: var(--pink); }
+
+  /* ACTIVITIES GRID */
+  .activity-list { padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .act-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.08); overflow: hidden; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+  .act-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.13); }
+  .act-card.done { opacity: .7; }
+  .act-header { padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+  .act-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; color: #fff; flex-shrink: 0; }
+  .act-title { font-weight: 700; font-size: .95rem; }
+  .act-body { padding: 0 16px 14px; font-size: .85rem; color: var(--gray); }
+  .act-done-badge { font-size: .75rem; padding: 2px 8px; border-radius: 10px; margin-left: auto; font-weight: 700; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 20px; max-width: 580px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; }
+  .modal-header { padding: 20px 20px 14px; border-radius: 20px 20px 0 0; }
+  .modal-header h2 { font-size: 1.3rem; color: #fff; }
+  .modal-body { padding: 20px; }
+  .close-btn { position: absolute; top: 14px; right: 16px; background: rgba(255,255,255,.25); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .modal-section { margin-bottom: 14px; }
+  .modal-section label { font-size: .8rem; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 5px; }
+  .modal-section p { font-size: .95rem; line-height: 1.6; }
+  .steps-list { list-style: none; counter-reset: steps; }
+  .steps-list li { counter-increment: steps; display: flex; gap: 10px; margin-bottom: 8px; font-size: .93rem; line-height: 1.5; }
+  .steps-list li::before { content: counter(steps); background: var(--purple); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .tip-box { background: var(--yellow-light); border-left: 4px solid var(--yellow); border-radius: 8px; padding: 12px; font-size: .88rem; line-height: 1.5; }
+  .tip-box strong { color: #5A4A00; }
+
+  /* INTERACTIVE ZONES */
+  .game-zone { background: var(--gray-light); border-radius: 12px; padding: 16px; margin-top: 14px; }
+  .game-zone h3 { font-size: .95rem; margin-bottom: 12px; color: var(--dark); }
+  .write-area { width: 100%; min-height: 80px; border: 2px dashed #ccc; border-radius: 8px; padding: 10px; font-size: 1rem; font-family: inherit; resize: vertical; background: #fff; }
+  .write-area:focus { outline: none; border-color: var(--purple); }
+  .options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+  .opt-btn { padding: 10px 8px; background: #fff; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; font-size: .95rem; font-weight: 600; text-align: center; transition: all .15s; }
+  .opt-btn:hover { border-color: var(--purple); background: var(--purple-light); }
+  .opt-btn.correct { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .opt-btn.wrong { background: #FFE5E5; border-color: #E53935; color: #E53935; animation: shake .3s; }
+  .opt-btn.selected { background: var(--purple-light); border-color: var(--purple); }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  .drag-zone { display: flex; flex-wrap: wrap; gap: 8px; min-height: 50px; border: 2px dashed #ccc; border-radius: 10px; padding: 10px; background: #fff; }
+  .drag-zone.highlight { border-color: var(--purple); background: var(--purple-light); }
+  .drag-item { padding: 8px 14px; background: var(--purple-light); border: 2px solid var(--purple); border-radius: 20px; cursor: grab; font-weight: 700; font-size: .95rem; color: var(--purple); user-select: none; }
+  .drag-item:active { cursor: grabbing; }
+
+  .palmas-btn { padding: 16px 28px; background: var(--purple); color: #fff; border: none; border-radius: 14px; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: transform .1s; }
+  .palmas-btn:active { transform: scale(.95); }
+  .palmas-count { font-size: 2.5rem; font-weight: 900; color: var(--purple); text-align: center; margin: 10px 0; }
+  .palmas-word { font-size: 1.3rem; font-weight: 700; text-align: center; color: var(--dark); margin-bottom: 12px; }
+
+  .letter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; }
+  .letter-cell { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 900; border-radius: 8px; cursor: pointer; border: 2px solid #ddd; background: #fff; transition: all .15s; }
+  .letter-cell:hover { background: var(--purple-light); border-color: var(--purple); }
+  .letter-cell.found { background: var(--green-light); border-color: var(--green); color: var(--green); }
+
+  .fb-msg { padding: 10px 14px; border-radius: 8px; font-size: .9rem; font-weight: 700; margin-top: 10px; display: none; }
+  .fb-msg.ok { background: var(--green-light); color: var(--green); display: block; }
+  .fb-msg.err { background: #FFE5E5; color: #E53935; display: block; }
+
+  .complete-btn { width: 100%; padding: 14px; background: var(--green); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 16px; transition: background .2s; }
+  .complete-btn:hover { background: #27AE60; }
+
+  /* CONFETTI */
+  .confetti { position: fixed; pointer-events: none; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; }
+
+  /* SCORE */
+  .score-bar { background: #fff; padding: 12px 16px; display: flex; justify-content: space-around; border-bottom: 1px solid #eee; font-size: .85rem; }
+  .score-item { text-align: center; }
+  .score-num { font-size: 1.4rem; font-weight: 900; color: var(--purple); }
+
+  @media (max-width: 480px) {
+    .activity-list { grid-template-columns: 1fr; }
+    .modal { border-radius: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="stars">★ ★ ★ ★ ★</div>
+  <h1>40 Atividades Interativas</h1>
+  <p>Do Zero à Leitura em 90 Dias · App LittleStar</p>
+  <div class="progress-wrap"><div class="progress-bar" id="progBar" style="width:0%"></div></div>
+  <div class="progress-label" id="progLabel">0 de 40 concluídas</div>
+</header>
+
+<div class="score-bar">
+  <div class="score-item"><div class="score-num" id="scoreStars">0</div><div>⭐ Estrelas</div></div>
+  <div class="score-item"><div class="score-num" id="scoreDone">0</div><div>✓ Feitas</div></div>
+  <div class="score-item"><div class="score-num" id="scorePhase">1</div><div>Fase atual</div></div>
+</div>
+
+<div class="fase-tabs">
+  <button class="fase-tab f1 active" onclick="setFase(1)">Fase 1 — Sons</button>
+  <button class="fase-tab f2" onclick="setFase(2)">Fase 2 — Alfabeto</button>
+  <button class="fase-tab f3" onclick="setFase(3)">Fase 3 — Sílabas</button>
+  <button class="fase-tab f4" onclick="setFase(4)">Fase 4 — Leitura</button>
+</div>
+
+<div class="activity-list" id="actList"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header" id="modalHeader">
+      <h2 id="modalTitle"></h2>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<canvas class="confetti" id="confetti"></canvas>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const FASE_COLORS = { 1:'#6C3FC5', 2:'#2ECC71', 3:'#FF8C00', 4:'#E91E8C' };
+const FASE_LIGHT  = { 1:'#EEE6FF', 2:'#E8F8F0', 3:'#FFF3E0', 4:'#FFE8F4' };
+
+const ACTIVITIES = [
+  // FASE 1
+  { num:1, fase:1, title:'Caçador de Sons', obj:'Identificar o som inicial das palavras.',
+    mat:'Sem materiais — só sua voz!',
+    steps:['Ouça a palavra em voz alta e pense no primeiro som.','Clique na letra inicial correta abaixo!','Tente acertar todas as 5 palavras!','Cada acerto vale uma estrela ⭐'],
+    tip:'Exagere no som inicial: BBBBola! MMMacaco! Isso ajuda o cérebro a separar.',
+    game:'sound_initial' },
+  { num:2, fase:1, title:'Rima que Anima', obj:'Reconhecer e criar rimas simples.',
+    mat:'Sem materiais — só sua voz!',
+    steps:['Leia a palavra.','Escolha a palavra que rima com ela.','Palavras que rimam têm o mesmo som no final!'],
+    tip:'Cante as rimas! A melodia ajuda a memória a fixar padrões sonoros.',
+    game:'rhyme' },
+  { num:3, fase:1, title:'Palmas nas Sílabas', obj:'Separar palavras em sílabas usando ritmo.',
+    mat:'Suas mãos para bater palmas!',
+    steps:['Veja a palavra.','Bate o botão PALMA uma vez para cada pedacinho da palavra.','Quando achar que terminou, veja se acertou!'],
+    tip:'Coloque a mão embaixo do queixo — cada sílaba abre a boca!',
+    game:'clap' },
+  { num:4, fase:1, title:'Jogo do Eco', obj:'Identificar sons iniciais e finais.',
+    mat:'Sua atenção auditiva!',
+    steps:['Escute a palavra (texto).','Escolha se o som pedido está no INÍCIO ou no FIM.','5 palavras para acertar!'],
+    tip:'Fale a palavra muito devagar, arrastando: SSSSol... o S está no início!',
+    game:'echo' },
+  { num:5, fase:1, title:'Palavras Escondidas', obj:'Identificar palavras menores dentro de palavras maiores.',
+    mat:'Atenção e criatividade!',
+    steps:['Veja a palavra grande.','Encontre as palavras escondidas dentro dela.','Clique nas letras para formar a palavra escondida!'],
+    tip:'BORBOLETA tem BOR + BOLA + TA. Divirta-se explorando!',
+    game:'hidden_words' },
+  { num:6, fase:1, title:'Obra-Prima dos Sons', obj:'Associar sons a palavras.',
+    mat:'Apenas sua imaginação!',
+    steps:['Veja o som/letra indicado.','Escreva uma palavra que começa com esse som.','Tente encontrar uma palavra diferente para cada!'],
+    tip:'Use palavras do dia a dia: comida, brinquedo, animal favorito!',
+    game:'free_write', prompt:'Escreva palavras que começam com cada som:', fields:['B','M','P','S','T'] },
+  { num:7, fase:1, title:'Trem das Palavras', obj:'Encadear palavras pelo som final.',
+    mat:'Sua voz e criatividade!',
+    steps:['A palavra começa com CASA.','Pense numa palavra que começa com o som final de CASA: A...','Continue o trem! Cada nova palavra começa com o som final da anterior.','Tente 5 vagões!'],
+    tip:'O jogo é com SONS, não letras! BOL-A → A-VIÃ-O → O-VO → O-VELHA...',
+    game:'word_train' },
+  { num:8, fase:1, title:'Detetive de Sons', obj:'Localizar sons no início, meio ou fim.',
+    mat:'Sua atenção auditiva!',
+    steps:['Veja a palavra e o som indicado.','Escolha: o som está no INÍCIO, MEIO ou FIM?','Acerte 5 para ganhar!'],
+    tip:'Pronuncie devagar e "filme" cada som em sua mente.',
+    game:'sound_position' },
+  { num:9, fase:1, title:'Montanha de Sílabas', obj:'Ordenar palavras por número de sílabas.',
+    mat:'Sua memória!',
+    steps:['Veja as palavras embaralhadas.','Arraste-as para colocar em ordem do menor para o maior número de sílabas!','Do mais curto ao mais longo.'],
+    tip:'Bata palmas para contar: SOL (1), BOLA (2), SAPATO (3)!',
+    game:'order_syllables' },
+  { num:10, fase:1, title:'Coleção de Rimas', obj:'Criar trio de rimas pessoais.',
+    mat:'Sua criatividade!',
+    steps:['Veja a palavra base.','Escreva 2 palavras que rimam com ela.','Tente completar todos os trios!'],
+    tip:'Não precisa fazer sentido — AMOR/COR/FLOR é um trio perfeito!',
+    game:'rhyme_trio' },
+
+  // FASE 2
+  { num:11, fase:2, title:'Meu Alfabeto Colorido', obj:'Reconhecer e nomear letras do alfabeto.',
+    mat:'Sem materiais extras!',
+    steps:['Clique em cada letra para ouvir seu nome.','Depois escreva no campo uma palavra que começa com aquela letra!','Complete todas as 26 letras.'],
+    tip:'Cante o alfabeto enquanto clica! A melodia ajuda a memorizar.',
+    game:'alphabet_tap' },
+  { num:12, fase:2, title:'Caça às Letras', obj:'Localizar letras em um texto.',
+    mat:'Seus olhos atentos!',
+    steps:['Veja qual letra deve encontrar.','Clique em todas as ocorrências dessa letra no texto.','Encontre todas sem errar!'],
+    tip:'Passe o dedo linha por linha — assim não perde nenhuma!',
+    game:'letter_hunt' },
+  { num:13, fase:2, title:'Par de Letras', obj:'Combinar maiúsculas com minúsculas.',
+    mat:'Memória e atenção!',
+    steps:['Vire as cartas aos pares.','Encontre a maiúscula e a minúscula de cada letra.','Tente em menos de 20 movimentos!'],
+    tip:'A minúscula tem a mesma família da maiúscula: A/a, B/b, C/c...',
+    game:'memory_letters' },
+  { num:14, fase:2, title:'Bingo das Letras', obj:'Reconhecer letras auditivamente.',
+    mat:'Atenção e sorte!',
+    steps:['Olhe sua cartela de bingo.','Clique na letra quando ela for chamada.','Faça 4 em linha para vencer!'],
+    tip:'Para dificultar: chame palavras em vez de letras!',
+    game:'bingo' },
+  { num:15, fase:2, title:'Letra no Mundo', obj:'Conectar letras a objetos do cotidiano.',
+    mat:'Sua imaginação!',
+    steps:['Veja a letra do dia.','Escreva um objeto que começa com essa letra.','Tente uma palavra para cada letra do alfabeto!'],
+    tip:'Olhe ao redor da sala — há objetos com aquela letra por perto?',
+    game:'alphabet_world' },
+  { num:16, fase:2, title:'Escrevo Meu Nome', obj:'Reconhecer e escrever o próprio nome.',
+    mat:'Sua letra!',
+    steps:['Escreva seu nome no campo abaixo.','Separe o nome em letras clicando em cada uma.','Veja quais vogais e consoantes tem no seu nome!'],
+    tip:'O nome próprio é a primeira palavra que toda criança aprende a reconhecer!',
+    game:'my_name' },
+  { num:17, fase:2, title:'Família das Letras', obj:'Aprender maiúsculas e minúsculas como pares.',
+    mat:'Atenção!',
+    steps:['Veja a letra maiúscula.','Clique na minúscula correspondente.','Complete os 10 pares!'],
+    tip:'Foque primeiro nas letras do seu nome, depois expanda!',
+    game:'letter_pairs' },
+  { num:18, fase:2, title:'Letra Tátil', obj:'Reconhecer letras pela forma.',
+    mat:'Sua imaginação!',
+    steps:['Veja os traços que formam a letra.','Descubra qual letra é.','10 letras para adivinhar!'],
+    tip:'Trace a letra com o dedo no ar antes de responder!',
+    game:'letter_trace' },
+  { num:19, fase:2, title:'Vogais vs Consoantes', obj:'Classificar letras em vogais e consoantes.',
+    mat:'Atenção!',
+    steps:['Veja a letra que aparece.','Clique em VOGAL ou CONSOANTE.','Acerte 10 seguidas para vencer!'],
+    tip:'Vogais: A, E, I, O, U. Todas as outras são consoantes!',
+    game:'vowel_consonant' },
+  { num:20, fase:2, title:'Dicionário Ilustrado', obj:'Criar palavras para cada letra.',
+    mat:'Sua criatividade!',
+    steps:['Para cada letra do alfabeto, escreva uma palavra.','A palavra pode ser qualquer coisa que começa com aquela letra!','Tente completar A, B, C, D, E, F, G, H, I, J...'],
+    tip:'Use palavras do seu universo: brinquedos, comidas, animais favoritos!',
+    game:'dictionary' },
+
+  // FASE 3
+  { num:21, fase:3, title:'Fábrica de Sílabas', obj:'Combinar consoantes e vogais para formar sílabas.',
+    mat:'Atenção e rapidez!',
+    steps:['Arraste a consoante para a vogal correta.','Forme a sílaba indicada.','Complete todas as famílias silábicas!'],
+    tip:'A família BA-BE-BI-BO-BU é a mais importante! Comece por ela.',
+    game:'syllable_factory' },
+  { num:22, fase:3, title:'Construtor de Palavras', obj:'Unir sílabas para formar palavras.',
+    mat:'Atenção!',
+    steps:['Veja as sílabas disponíveis.','Clique nelas na ordem certa para formar uma palavra.','Cada palavra que você forma conta pontos!'],
+    tip:'Se travar, diga as sílabas em voz alta juntas — BOLA = BO+LA!',
+    game:'word_builder' },
+  { num:23, fase:3, title:'Sílaba Secreta', obj:'Completar palavras com a sílaba que falta.',
+    mat:'Atenção!',
+    steps:['Veja a palavra com uma lacuna.','Escolha qual sílaba preenche o espaço.','Há 3 opções — pense bem!'],
+    tip:'Leia a palavra completa em voz alta com cada opção. Qual soa certo?',
+    game:'missing_syllable' },
+  { num:24, fase:3, title:'Palavra + Imagem', obj:'Associar palavras a seus significados.',
+    mat:'Atenção e memória!',
+    steps:['Veja a palavra.','Clique na imagem (emoji) correspondente.','Combine os 8 pares!'],
+    tip:'Se não conhecer a palavra, leia em voz alta devagar — às vezes o som revela o significado!',
+    game:'word_image' },
+  { num:25, fase:3, title:'Cruzadinha das Sílabas', obj:'Completar uma cruzadinha com palavras silábicas.',
+    mat:'Atenção!',
+    steps:['Leia a dica (imagem ou descrição).','Escreva a palavra na cruzadinha.','Complete todas as palavras!'],
+    tip:'Conte as letras disponíveis na cruzadinha — isso ajuda a confirmar a resposta!',
+    game:'crossword' },
+  { num:26, fase:3, title:'Ditado Divertido', obj:'Transcrever palavras faladas para a escrita.',
+    mat:'Atenção auditiva!',
+    steps:['Clique no botão para "ouvir" a palavra (ela aparece por 1 segundo).','Escreva o que você leu/lembrou.','Veja se acertou!'],
+    tip:'O ditado NÃO é prova — é treino! Errar faz parte do processo.',
+    game:'dictation' },
+  { num:27, fase:3, title:'Leitura com Fantoches', obj:'Praticar leitura de palavras com um personagem.',
+    mat:'Sua voz expressiva!',
+    steps:['Aparece uma palavra para o Leco aprender.','Você lê a palavra em voz alta.','Depois clique nos botões de emoção para o Leco reagir!'],
+    tip:'Quando você "ensina", você processa o conhecimento duas vezes!',
+    game:'puppet_read' },
+  { num:28, fase:3, title:'Palavra do Dia', obj:'Aprofundar o conhecimento de uma palavra.',
+    mat:'Curiosidade!',
+    steps:['Veja a palavra do dia.','Separe em sílabas clicando nos espaços.','Depois use a palavra numa frase!'],
+    tip:'Use a palavra do dia o dia inteiro: no jantar, no banho, nas brincadeiras!',
+    game:'word_of_day' },
+  { num:29, fase:3, title:'Sorteio de Sílabas', obj:'Criar palavras de forma criativa.',
+    mat:'Sorte e criatividade!',
+    steps:['Clique para sortear 3 sílabas.','Tente formar uma palavra com elas.','Se não conseguir, sorteie mais 1 sílaba!'],
+    tip:'Às vezes as sílabas formam palavras de trás para frente! Tente das duas formas.',
+    game:'syllable_lottery' },
+  { num:30, fase:3, title:'Minha Primeira Frase', obj:'Compor a primeira frase completa.',
+    mat:'Criatividade!',
+    steps:['Arraste as palavras para montar uma frase que faz sentido.','Você pode usar as palavras em qualquer ordem.','Forme pelo menos 2 frases diferentes!'],
+    tip:'Uma frase precisa de pelo menos: quem faz + o que faz. Ex: O GATO DORME.',
+    game:'sentence_builder' },
+
+  // FASE 4
+  { num:31, fase:4, title:'Leitura em Voz Alta', obj:'Praticar leitura com entonação e expressão.',
+    mat:'Sua voz expressiva!',
+    steps:['Leia o texto abaixo com bastante expressão.','Clique nos ícones para escolher o tom: alegre, triste, assustado, surpreso.','Grave sua leitura (se possível) e ouça depois!'],
+    tip:'Atores leem o texto 3-4 vezes antes de gravar. Cada leitura melhora!',
+    game:'expressive_read' },
+  { num:32, fase:4, title:'Teatro de Leitura', obj:'Desenvolver fluência através da dramatização.',
+    mat:'Sua melhor voz de ator!',
+    steps:['Escolha um personagem: Leão, Ratinho ou Narrador.','Leia apenas as falas do seu personagem.','Clique em PRÓXIMA FALA para avançar!'],
+    tip:'Cada personagem tem uma voz diferente! Leão: grave. Ratinho: agudo.',
+    game:'theater' },
+  { num:33, fase:4, title:'Cronômetro da Leitura', obj:'Medir e melhorar velocidade de leitura.',
+    mat:'Atenção!',
+    steps:['Clique INICIAR.','Leia o texto o mais rápido que conseguir.','Clique TERMINEI quando acabar.','Veja sua velocidade em palavras por minuto!'],
+    tip:'Velocidade ideal: 20-30 palavras/min na semana 1. 60-80 na semana 8.',
+    game:'speed_read' },
+  { num:34, fase:4, title:'Leitura Compartilhada', obj:'Praticar leitura em par, revezando sentenças.',
+    mat:'Você e um adulto!',
+    steps:['O adulto lê a primeira frase (fundo roxo).','Você lê a segunda (fundo verde).','Revezem até o fim do texto!','Depois discutam: o que aconteceu?'],
+    tip:'Aponte as palavras com o dedo enquanto lê — isso treina rastreamento visual.',
+    game:'shared_reading' },
+  { num:35, fase:4, title:'Conto Relâmpago', obj:'Criar e ler uma história curta.',
+    mat:'Criatividade e imaginação!',
+    steps:['Você recebe 3 palavras aleatórias.','Crie uma mini-história usando as 3 palavras.','Escreva no campo e depois leia em voz alta!'],
+    tip:'Não existe conto errado! Qualquer história que usa as 3 palavras é perfeita.',
+    game:'lightning_story' },
+  { num:36, fase:4, title:'Mapa da História', obj:'Compreender a estrutura narrativa.',
+    mat:'Atenção e compreensão!',
+    steps:['Leia o texto curto.','Preencha o mapa: Quem? O quê? Onde? Quando? Por quê?','Veja se sua resposta está completa!'],
+    tip:'O mapa da história funciona para QUALQUER livro ou filme que você ver!',
+    game:'story_map' },
+  { num:37, fase:4, title:'Jornal do Dia', obj:'Escrever e ler um jornal sobre o próprio dia.',
+    mat:'Memória e criatividade!',
+    steps:['Pense no que fez hoje.','Escreva o título do dia (ex: DIA DO PARQUE).','Escreva 2-3 frases sobre o que aconteceu.','Leia seu jornal em voz alta!'],
+    tip:'Fotografe seu jornal e compare com o de amanhã — você já estará escrevendo mais!',
+    game:'diary' },
+  { num:38, fase:4, title:'Lista Mágica', obj:'Praticar leitura e escrita funcional.',
+    mat:'Criatividade!',
+    steps:['Escolha o tipo de lista: compras, desejos ou amigos.','Escreva os itens da lista.','Depois leia a lista em voz alta para um adulto!'],
+    tip:'Listas são leitura funcional — usamos todos os dias na vida real!',
+    game:'magic_list' },
+  { num:39, fase:4, title:'Bilhete Carinhoso', obj:'Escrever e ler um bilhete para alguém especial.',
+    mat:'Amor e carinho!',
+    steps:['Escolha para quem vai escrever.','Escreva sua mensagem.','Clique em FINALIZAR para ver o bilhete pronto!','Mostre para a pessoa especial!'],
+    tip:'Escrever para alguém real é a atividade mais motivadora que existe!',
+    game:'love_note' },
+  { num:40, fase:4, title:'Eu Sou Leitora! ⭐', obj:'Celebrar a conquista da leitura!',
+    mat:'Sua história de conquista!',
+    steps:['Preencha seu Certificado de Leitora.','Escreva uma carta para você mesmo no futuro.','Celebre tudo que aprendeu!'],
+    tip:'Você chegou até aqui — isso é incrível! Continue lendo 20 minutos todo dia.',
+    game:'certificate' },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let done = JSON.parse(localStorage.getItem('ativ_done') || '[]');
+let stars = parseInt(localStorage.getItem('ativ_stars') || '0');
+let currentFase = 1;
+
+function save() {
+  localStorage.setItem('ativ_done', JSON.stringify(done));
+  localStorage.setItem('ativ_stars', stars);
+  updateScore();
+}
+
+function updateScore() {
+  const pct = (done.length / 40) * 100;
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = done.length + ' de 40 concluídas';
+  document.getElementById('scoreStars').textContent = stars;
+  document.getElementById('scoreDone').textContent = done.length;
+  const phases = done.map(n => ACTIVITIES.find(a => a.num === n)?.fase || 1);
+  document.getElementById('scorePhase').textContent = Math.max(...phases, 1);
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function setFase(f) {
+  currentFase = f;
+  document.querySelectorAll('.fase-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.fase-tab')[f-1].classList.add('active');
+  renderList();
+}
+
+function renderList() {
+  const list = document.getElementById('actList');
+  const acts = ACTIVITIES.filter(a => a.fase === currentFase);
+  const col = FASE_COLORS[currentFase];
+  const light = FASE_LIGHT[currentFase];
+  list.innerHTML = acts.map(a => {
+    const isDone = done.includes(a.num);
+    return `<div class="act-card${isDone?' done':''}" onclick="openActivity(${a.num})">
+      <div class="act-header" style="background:${light}">
+        <div class="act-num" style="background:${col}">${a.num}</div>
+        <div class="act-title">${a.title}</div>
+        ${isDone ? `<span class="act-done-badge" style="background:${col};color:#fff">✓ Feita</span>` : ''}
+      </div>
+      <div class="act-body">${a.obj}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+let currentAct = null;
+
+function openActivity(num) {
+  currentAct = ACTIVITIES.find(a => a.num === num);
+  if (!currentAct) return;
+  const col = FASE_COLORS[currentAct.fase];
+  document.getElementById('modalHeader').style.background = col;
+  document.getElementById('modalTitle').textContent = `${currentAct.num}. ${currentAct.title}`;
+  document.getElementById('modalBody').innerHTML = buildGameHTML(currentAct);
+  document.getElementById('modal').classList.add('open');
+  initGame(currentAct);
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function buildGameHTML(act) {
+  const col = FASE_COLORS[act.fase];
+  return `
+    <div class="modal-section">
+      <label>Objetivo</label>
+      <p>${act.obj}</p>
+    </div>
+    <div class="modal-section">
+      <label>Materiais</label>
+      <p>${act.mat}</p>
+    </div>
+    <div class="modal-section">
+      <label>Como fazer</label>
+      <ul class="steps-list">${act.steps.map(s=>`<li>${s}</li>`).join('')}</ul>
+    </div>
+    <div class="game-zone" id="gameZone">
+      ${getGameHTML(act)}
+    </div>
+    <div class="tip-box" style="margin-top:14px">
+      <strong>★ Dica para os pais:</strong> ${act.tip}
+    </div>
+    <button class="complete-btn" style="background:${col}" onclick="markDone(${act.num})">
+      ${done.includes(act.num) ? '✓ Já concluída! Fazer de novo?' : '✓ Marcar como concluída e ganhar ⭐'}
+    </button>`;
+}
+
+// ─── GAMES HTML ──────────────────────────────────────────────────────────────
+function getGameHTML(act) {
+  const g = act.game;
+
+  if (g === 'sound_initial') return `
+    <h3>🎯 Qual é o som inicial?</h3>
+    <div id="si_word" style="font-size:2rem;font-weight:900;text-align:center;margin:12px 0;color:#6C3FC5">BOLA</div>
+    <div class="options-grid" id="si_opts"></div>
+    <div class="fb-msg" id="si_fb"></div>
+    <div style="margin-top:12px;text-align:center"><span id="si_score" style="font-weight:700">0/5 acertos</span></div>`;
+
+  if (g === 'rhyme') return `
+    <h3>🎶 Qual rima com a palavra?</h3>
+    <div id="rh_word" style="font-size:2rem;font-weight:900;text-align:center;margin:12px 0;color:#2ECC71">GATO</div>
+    <div class="options-grid" id="rh_opts"></div>
+    <div class="fb-msg" id="rh_fb"></div>`;
+
+  if (g === 'clap') return `
+    <h3>👏 Bate palmas para cada sílaba!</h3>
+    <div class="palmas-word" id="clap_word">BOLA</div>
+    <div style="text-align:center">
+      <button class="palmas-btn" onclick="clap()" style="margin:0 auto">👏 PALMA!</button>
+    </div>
+    <div class="palmas-count" id="clap_count">0</div>
+    <div style="text-align:center;margin-top:8px">
+      <button onclick="checkClap()" style="padding:10px 20px;background:#FF8C00;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700">Verificar ✓</button>
+      <button onclick="nextClapWord()" style="padding:10px 20px;background:#eee;border:none;border-radius:10px;cursor:pointer;margin-left:8px">Próxima →</button>
+    </div>
+    <div class="fb-msg" id="clap_fb"></div>`;
+
+  if (g === 'vowel_consonant') return `
+    <h3>🔤 É vogal ou consoante?</h3>
+    <div id="vc_letter" style="font-size:4rem;font-weight:900;text-align:center;margin:16px 0;color:#6C3FC5">A</div>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button onclick="checkVC('vogal')" style="padding:14px 28px;background:#EEE6FF;border:2px solid #6C3FC5;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;color:#6C3FC5">VOGAL</button>
+      <button onclick="checkVC('consoante')" style="padding:14px 28px;background:#E8F8F0;border:2px solid #2ECC71;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;color:#2ECC71">CONSOANTE</button>
+    </div>
+    <div class="fb-msg" id="vc_fb"></div>
+    <div style="text-align:center;margin-top:8px"><span id="vc_score" style="font-weight:700">0/10 acertos</span></div>`;
+
+  if (g === 'word_builder') return `
+    <h3>🔨 Monte a palavra!</h3>
+    <div id="wb_target" style="font-size:1.2rem;font-weight:700;text-align:center;margin:10px 0;color:#FF8C00">Monte: <span id="wb_word">BOLA</span></div>
+    <div id="wb_syllables" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0"></div>
+    <div id="wb_built" style="min-height:44px;border:2px dashed #ccc;border-radius:10px;display:flex;gap:6px;align-items:center;justify-content:center;padding:8px;margin-bottom:8px;font-size:1.3rem;font-weight:700;color:#FF8C00"></div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button onclick="checkWordBuilder()" style="padding:10px 20px;background:#FF8C00;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700">Verificar ✓</button>
+      <button onclick="resetWordBuilder()" style="padding:10px 20px;background:#eee;border:none;border-radius:10px;cursor:pointer">Limpar ↺</button>
+    </div>
+    <div class="fb-msg" id="wb_fb"></div>`;
+
+  if (g === 'missing_syllable') return `
+    <h3>❓ Qual sílaba está faltando?</h3>
+    <div id="ms_word" style="font-size:2rem;font-weight:900;text-align:center;margin:14px 0;color:#FF8C00">BO___</div>
+    <div class="options-grid" id="ms_opts"></div>
+    <div class="fb-msg" id="ms_fb"></div>
+    <div style="text-align:center;margin-top:8px"><span id="ms_score" style="font-weight:700">0/5 acertos</span></div>`;
+
+  if (g === 'word_image') return `
+    <h3>🖼️ Qual imagem combina com a palavra?</h3>
+    <div id="wi_word" style="font-size:2rem;font-weight:900;text-align:center;margin:14px 0;color:#E91E8C">BOLA</div>
+    <div class="options-grid" id="wi_opts"></div>
+    <div class="fb-msg" id="wi_fb"></div>`;
+
+  if (g === 'speed_read') return `
+    <h3>⏱️ Leia o mais rápido que conseguir!</h3>
+    <div id="sr_text" style="background:#f9f9f9;border-radius:10px;padding:14px;font-size:1.05rem;line-height:1.8;margin:12px 0">
+      O gato senta na mesa bonita. A bola rola no jardim. O pato nada no lago azul. A criança sorri feliz.
+    </div>
+    <div style="text-align:center">
+      <button id="sr_btn" onclick="startTimer()" style="padding:12px 28px;background:#E91E8C;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer">▶ INICIAR</button>
+    </div>
+    <div id="sr_result" style="font-size:1.1rem;text-align:center;margin-top:12px;font-weight:700;color:#E91E8C"></div>`;
+
+  if (g === 'story_map') return `
+    <h3>🗺️ Mapa da História</h3>
+    <div style="background:#f9f9f9;border-radius:10px;padding:12px;margin-bottom:12px;font-size:.93rem;line-height:1.6">
+      Nina, a coelhinha, morava debaixo de um grande carvalho. Certa manhã, sua cenoura favorita sumiu. Ela procurou por toda parte e encontrou um ratinho com fome. Com pena, Nina deu metade da cenoura para ele.
+    </div>
+    ${['QUEM é a história?','O QUÊ aconteceu?','ONDE se passa?','QUANDO aconteceu?','POR QUÊ aconteceu?'].map((q,i)=>`
+    <div style="margin-bottom:8px">
+      <label style="font-size:.85rem;font-weight:700;color:#666;display:block;margin-bottom:3px">${q}</label>
+      <input type="text" id="sm_${i}" style="width:100%;padding:8px;border:2px solid #ddd;border-radius:8px;font-size:.95rem" placeholder="Escreva aqui...">
+    </div>`).join('')}
+    <button onclick="checkStoryMap()" style="padding:10px 20px;background:#E91E8C;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700;margin-top:6px">Verificar ✓</button>
+    <div class="fb-msg" id="sm_fb"></div>`;
+
+  if (g === 'lightning_story') return `
+    <h3>⚡ Conto Relâmpago!</h3>
+    <div style="text-align:center;margin-bottom:12px">
+      <button onclick="newWords()" style="padding:10px 20px;background:#6C3FC5;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700">🎲 Sortear palavras</button>
+    </div>
+    <div id="ls_words" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px"></div>
+    <textarea class="write-area" id="ls_story" placeholder="Escreva sua história aqui usando as 3 palavras..."></textarea>
+    <div style="font-size:.85rem;color:#666;margin-top:6px">Depois leia sua história em voz alta!</div>`;
+
+  if (g === 'certificate') return `
+    <h3>🏆 Meu Certificado de Leitora!</h3>
+    <div style="background:linear-gradient(135deg,#6C3FC5,#9B72E8);border-radius:14px;padding:24px;text-align:center;color:#fff;margin-bottom:14px">
+      <div style="font-size:2rem;margin-bottom:8px">⭐ 🦉 ⭐</div>
+      <div style="font-size:1.4rem;font-weight:900;color:#FFD600">CERTIFICADO</div>
+      <div style="font-size:1rem;margin:8px 0">de Leitora Independente</div>
+      <input id="cert_name" type="text" placeholder="Escreva seu nome aqui" style="background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);border-radius:8px;padding:8px 14px;color:#fff;font-size:1.1rem;font-weight:700;text-align:center;width:80%;margin:10px 0">
+      <div style="font-size:.9rem;opacity:.85;margin-top:4px">completou o programa Do Zero à Leitura em 90 Dias</div>
+    </div>
+    <textarea class="write-area" id="cert_letter" placeholder="Carta para o futuro: Querida(o) eu do futuro, aprendi que..."></textarea>`;
+
+  // Default: free write
+  if (g === 'free_write') return `
+    <h3>✍️ Escreva aqui!</h3>
+    ${(act.fields || ['Resposta:']).map((f,i) => `
+    <div style="margin-bottom:10px">
+      <label style="font-size:.85rem;font-weight:700;color:#666;display:block;margin-bottom:3px">${f}</label>
+      <input type="text" style="width:100%;padding:9px;border:2px solid #ddd;border-radius:8px;font-size:.95rem" placeholder="Escreva aqui...">
+    </div>`).join('')}`;
+
+  if (g === 'diary') return `
+    <h3>📰 Meu Jornal de Hoje</h3>
+    <div style="margin-bottom:10px">
+      <label style="font-size:.85rem;font-weight:700;color:#666;display:block;margin-bottom:3px">Título do dia (ex: DIA DO PARQUE):</label>
+      <input type="text" id="diary_title" style="width:100%;padding:9px;border:2px solid #ddd;border-radius:8px;font-size:1rem;font-weight:700" placeholder="DIA DE...">
+    </div>
+    <div>
+      <label style="font-size:.85rem;font-weight:700;color:#666;display:block;margin-bottom:3px">O que aconteceu hoje:</label>
+      <textarea class="write-area" id="diary_body" placeholder="Hoje eu..."></textarea>
+    </div>`;
+
+  if (g === 'love_note') return `
+    <h3>💌 Meu Bilhete Carinhoso</h3>
+    <div style="margin-bottom:10px">
+      <label style="font-size:.85rem;font-weight:700;color:#666;display:block;margin-bottom:3px">Para quem:</label>
+      <input type="text" id="note_to" style="width:100%;padding:9px;border:2px solid #ddd;border-radius:8px;font-size:.95rem" placeholder="Mamãe, Vovó, Amigo(a)...">
+    </div>
+    <div>
+      <label style="font-size:.85rem;font-weight:700;color:#666;display:block;margin-bottom:3px">Minha mensagem:</label>
+      <textarea class="write-area" id="note_msg" placeholder="Eu quero te dizer que..."></textarea>
+    </div>
+    <div style="margin-top:10px;text-align:right">
+      <button onclick="showNote()" style="padding:10px 18px;background:#E91E8C;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700">Ver bilhete 💌</button>
+    </div>
+    <div id="note_preview" style="display:none;background:#FFF3E0;border:2px solid #FF8C00;border-radius:12px;padding:16px;margin-top:12px;text-align:center"></div>`;
+
+  return `<textarea class="write-area" placeholder="Escreva sua resposta aqui..."></textarea>`;
+}
+
+// ─── GAME LOGIC ──────────────────────────────────────────────────────────────
+const SI_DATA = [
+  {word:'BOLA',ans:'B'},{word:'MACACO',ans:'M'},{word:'SAPO',ans:'S'},
+  {word:'PATO',ans:'P'},{word:'LIVRO',ans:'L'}
+];
+const RH_DATA = [
+  {word:'GATO',opts:['PATO','CASA','BOLA','MESA'],ans:'PATO'},
+  {word:'BOLO',opts:['PORTA','MOLO','MESA','DADO'],ans:'MOLO'},
+  {word:'AMOR',opts:['FLOR','MESA','BOLA','AZUL'],ans:'FLOR'},
+  {word:'MAR',opts:['LIVRO','DAR','GATO','PATO'],ans:'DAR'},
+];
+const CLAP_DATA = [
+  {word:'BOLA',syl:2},{word:'SAPATO',syl:3},{word:'BORBOLETA',syl:4},
+  {word:'SOL',syl:1},{word:'TARTARUGA',syl:4}
+];
+const VC_LETTERS = 'AEIOUPBMSTLCRDFGVNJZQX'.split('');
+const VOWELS = 'AEIOU';
+const WB_DATA = [
+  {word:'BOLA',syls:['BO','LA','MA','SA']},
+  {word:'PATO',syls:['PA','TO','MA','BI']},
+  {word:'CASA',syls:['CA','SA','BO','TE']},
+  {word:'MESA',syls:['ME','SA','LO','PA']},
+];
+const MS_DATA = [
+  {display:'BO___',ans:'LA',opts:['LA','SA','MA']},
+  {display:'CA___',ans:'SA',opts:['SA','TO','BI']},
+  {display:'PA___',ans:'TO',opts:['TO','MA','LA']},
+  {display:'ME___',ans:'SA',opts:['SA','BO','PA']},
+  {display:'SA___',ans:'PO',opts:['PO','TA','MI']},
+];
+const WI_DATA = [
+  {word:'BOLA',opts:['⚽','🏠','🦁','🌸'],ans:'⚽'},
+  {word:'CASA',opts:['⚽','🏠','🦁','🌸'],ans:'🏠'},
+  {word:'LEÃO',opts:['🐟','🦁','🐘','🌺'],ans:'🦁'},
+  {word:'FLOR',opts:['⚽','🏠','🦁','🌸'],ans:'🌸'},
+];
+
+let siIdx=0, siScore=0, rhIdx=0, clapIdx=0, clapClicks=0;
+let vcIdx=0, vcScore=0, wbBuilt=[], wbTarget='', msIdx=0, msScore=0;
+let wiIdx=0, srTimer=null, srStart=null;
+
+function initGame(act) {
+  siIdx=0; siScore=0; rhIdx=0; clapIdx=0; clapClicks=0;
+  vcIdx=0; vcScore=0; wbBuilt=[]; msIdx=0; msScore=0; wiIdx=0;
+  const g = act.game;
+  if (g==='sound_initial') renderSI();
+  if (g==='rhyme') renderRH();
+  if (g==='clap') renderClap();
+  if (g==='vowel_consonant') renderVC();
+  if (g==='word_builder') renderWB();
+  if (g==='missing_syllable') renderMS();
+  if (g==='word_image') renderWI();
+}
+
+function renderSI() {
+  if (siIdx>=SI_DATA.length) return;
+  const d = SI_DATA[siIdx];
+  document.getElementById('si_word').textContent = d.word;
+  const opts = ['B','M','P','S','L','T','G','A'].sort(()=>Math.random()-.5).slice(0,5);
+  if (!opts.includes(d.ans)) opts[0]=d.ans;
+  document.getElementById('si_opts').innerHTML = opts.sort(()=>Math.random()-.5)
+    .map(o=>`<button class="opt-btn" onclick="checkSI('${o}')">${o}</button>`).join('');
+  document.getElementById('si_fb').className='fb-msg';
+  document.getElementById('si_score').textContent = siScore+'/5 acertos';
+}
+function checkSI(v) {
+  const d=SI_DATA[siIdx], el=document.getElementById('si_fb');
+  if (v===d.ans) {
+    siScore++; siIdx++;
+    el.textContent='✓ Correto! '+d.word+' começa com '+d.ans+'!';
+    el.className='fb-msg ok';
+    document.querySelectorAll('#si_opts .opt-btn').forEach(b=>{if(b.textContent===v)b.classList.add('correct');});
+    if (siIdx>=SI_DATA.length) { el.textContent='🎉 Você acertou '+siScore+'/5! Incrível!'; return; }
+    setTimeout(renderSI,1200);
+  } else {
+    el.textContent='Tente de novo! Escuta: '+d.word+'... que som começa?';
+    el.className='fb-msg err';
+    document.querySelectorAll('#si_opts .opt-btn').forEach(b=>{if(b.textContent===v)b.classList.add('wrong');});
+    setTimeout(()=>{document.querySelectorAll('#si_opts .opt-btn').forEach(b=>b.classList.remove('wrong'));el.className='fb-msg';},800);
+  }
+}
+
+function renderRH() {
+  if (rhIdx>=RH_DATA.length) return;
+  const d=RH_DATA[rhIdx];
+  document.getElementById('rh_word').textContent=d.word;
+  document.getElementById('rh_opts').innerHTML=d.opts.map(o=>`<button class="opt-btn" onclick="checkRH('${o}')">${o}</button>`).join('');
+  document.getElementById('rh_fb').className='fb-msg';
+}
+function checkRH(v) {
+  const d=RH_DATA[rhIdx], el=document.getElementById('rh_fb');
+  if (v===d.ans) {
+    el.textContent='🎶 Isso! '+d.word+' rima com '+d.ans+'!'; el.className='fb-msg ok';
+    document.querySelectorAll('#rh_opts .opt-btn').forEach(b=>{if(b.textContent===v)b.classList.add('correct');});
+    rhIdx++;
+    if (rhIdx>=RH_DATA.length) { el.textContent='🎉 Você encontrou todas as rimas!'; return; }
+    setTimeout(renderRH,1200);
+  } else {
+    el.textContent='Hmm... repita '+d.word+' e '+v+' — rimam?'; el.className='fb-msg err';
+    document.querySelectorAll('#rh_opts .opt-btn').forEach(b=>{if(b.textContent===v)b.classList.add('wrong');});
+    setTimeout(()=>{document.querySelectorAll('#rh_opts .opt-btn').forEach(b=>b.classList.remove('wrong'));el.className='fb-msg';},900);
+  }
+}
+
+function renderClap() {
+  const d=CLAP_DATA[clapIdx]; clapClicks=0;
+  document.getElementById('clap_word').textContent=d.word;
+  document.getElementById('clap_count').textContent='0';
+  document.getElementById('clap_fb').className='fb-msg';
+}
+function clap() {
+  clapClicks++;
+  const el=document.getElementById('clap_count');
+  el.textContent=clapClicks;
+  el.style.transform='scale(1.3)'; setTimeout(()=>el.style.transform='',150);
+}
+function checkClap() {
+  const d=CLAP_DATA[clapIdx], el=document.getElementById('clap_fb');
+  if (clapClicks===d.syl) {
+    el.textContent='👏 Perfeito! '+d.word+' tem '+d.syl+' sílaba(s)!'; el.className='fb-msg ok';
+  } else {
+    el.textContent='Quase! '+d.word+' tem '+d.syl+' sílaba(s). Tente de novo!'; el.className='fb-msg err';
+  }
+}
+function nextClapWord() {
+  clapIdx=(clapIdx+1)%CLAP_DATA.length;
+  renderClap();
+}
+
+function renderVC() {
+  if (vcIdx>=VC_LETTERS.length) vcIdx=0;
+  document.getElementById('vc_letter').textContent=VC_LETTERS[vcIdx];
+  document.getElementById('vc_fb').className='fb-msg';
+}
+function checkVC(type) {
+  const letter=VC_LETTERS[vcIdx];
+  const isVowel=VOWELS.includes(letter);
+  const correct=(type==='vogal')===isVowel;
+  const el=document.getElementById('vc_fb');
+  if (correct) {
+    vcScore++; vcIdx++;
+    el.textContent='✓ Correto! '+letter+' é uma '+(isVowel?'vogal':'consoante')+'!'; el.className='fb-msg ok';
+    document.getElementById('vc_score').textContent=vcScore+'/10 acertos';
+    if (vcScore>=10) { el.textContent='🏆 Você acertou 10 seguidas! Mestre das letras!'; return; }
+    setTimeout(renderVC,1000);
+  } else {
+    el.textContent='Ops! '+letter+' é uma '+(isVowel?'vogal':'consoante')+'. Vogais são A, E, I, O, U!'; el.className='fb-msg err';
+    setTimeout(()=>el.className='fb-msg',1000);
+  }
+}
+
+function renderWB() {
+  const d=WB_DATA[Math.floor(Math.random()*WB_DATA.length)];
+  wbTarget=d.word; wbBuilt=[];
+  document.getElementById('wb_word').textContent=d.word;
+  document.getElementById('wb_built').textContent='';
+  document.getElementById('wb_syllables').innerHTML=d.syls.sort(()=>Math.random()-.5)
+    .map(s=>`<button class="opt-btn" onclick="addSyllable('${s}')" id="wb_${s}">${s}</button>`).join('');
+  document.getElementById('wb_fb').className='fb-msg';
+}
+function addSyllable(s) {
+  wbBuilt.push(s);
+  document.getElementById('wb_built').textContent=wbBuilt.join('');
+  document.getElementById('wb_'+s).style.opacity='.4';
+}
+function resetWordBuilder() { wbBuilt=[]; renderWB(); }
+function checkWordBuilder() {
+  const built=wbBuilt.join(''), el=document.getElementById('wb_fb');
+  if (built===wbTarget) {
+    el.textContent='🎉 Perfeito! Você montou: '+built+'!'; el.className='fb-msg ok';
+    setTimeout(renderWB,1500);
+  } else {
+    el.textContent='Quase! Você montou '+built+', mas a palavra é '+wbTarget+'. Tente de novo!'; el.className='fb-msg err';
+    setTimeout(()=>{ wbBuilt=[]; document.getElementById('wb_built').textContent=''; el.className='fb-msg';
+      document.querySelectorAll('[id^=wb_]').forEach(b=>{if(b.tagName==='BUTTON')b.style.opacity='1';}); },1200);
+  }
+}
+
+function renderMS() {
+  if (msIdx>=MS_DATA.length) { document.getElementById('ms_fb').textContent='🎉 Você completou todas!'; document.getElementById('ms_fb').className='fb-msg ok'; return; }
+  const d=MS_DATA[msIdx];
+  document.getElementById('ms_word').textContent=d.display;
+  document.getElementById('ms_opts').innerHTML=d.opts.map(o=>`<button class="opt-btn" onclick="checkMS('${o}')">${o}</button>`).join('');
+  document.getElementById('ms_fb').className='fb-msg';
+}
+function checkMS(v) {
+  const d=MS_DATA[msIdx], el=document.getElementById('ms_fb');
+  if (v===d.ans) {
+    msScore++; msIdx++;
+    el.textContent='✓ Isso! A sílaba era '+v+'!'; el.className='fb-msg ok';
+    document.getElementById('ms_score').textContent=msScore+'/5 acertos';
+    document.querySelectorAll('#ms_opts .opt-btn').forEach(b=>{if(b.textContent===v)b.classList.add('correct');});
+    setTimeout(renderMS,1200);
+  } else {
+    el.textContent='Não é bem isso... tente outra!'; el.className='fb-msg err';
+    document.querySelectorAll('#ms_opts .opt-btn').forEach(b=>{if(b.textContent===v)b.classList.add('wrong');});
+    setTimeout(()=>{document.querySelectorAll('#ms_opts .opt-btn').forEach(b=>b.classList.remove('wrong'));el.className='fb-msg';},800);
+  }
+}
+
+function renderWI() {
+  if (wiIdx>=WI_DATA.length) { document.getElementById('wi_fb').textContent='🎉 Você combinou tudo!'; document.getElementById('wi_fb').className='fb-msg ok'; return; }
+  const d=WI_DATA[wiIdx];
+  document.getElementById('wi_word').textContent=d.word;
+  document.getElementById('wi_opts').innerHTML=d.opts.map(o=>`<button class="opt-btn" onclick="checkWI('${o}')" style="font-size:2rem">${o}</button>`).join('');
+  document.getElementById('wi_fb').className='fb-msg';
+}
+function checkWI(v) {
+  const d=WI_DATA[wiIdx], el=document.getElementById('wi_fb');
+  if (v===d.ans) {
+    wiIdx++;
+    el.textContent='✓ Isso! '+d.word+' = '+v; el.className='fb-msg ok';
+    document.querySelectorAll('#wi_opts .opt-btn').forEach(b=>{if(b.textContent===v)b.classList.add('correct');});
+    setTimeout(renderWI,1200);
+  } else {
+    el.textContent='Não é esse... tente outro!'; el.className='fb-msg err';
+    document.querySelectorAll('#wi_opts .opt-btn').forEach(b=>{if(b.textContent===v)b.classList.add('wrong');});
+    setTimeout(()=>{document.querySelectorAll('#wi_opts .opt-btn').forEach(b=>b.classList.remove('wrong'));el.className='fb-msg';},800);
+  }
+}
+
+function startTimer() {
+  if (srTimer) return;
+  srStart=Date.now();
+  const btn=document.getElementById('sr_btn');
+  btn.textContent='⏹ TERMINEI'; btn.onclick=stopTimer;
+  btn.style.background='#E53935';
+  let t=setInterval(()=>{
+    const s=((Date.now()-srStart)/1000).toFixed(1);
+    document.getElementById('sr_result').textContent='⏱ '+s+'s';
+  },100);
+  srTimer=t;
+}
+function stopTimer() {
+  clearInterval(srTimer); srTimer=null;
+  const secs=(Date.now()-srStart)/1000;
+  const words=22; const wpm=Math.round((words/secs)*60);
+  document.getElementById('sr_result').textContent=`✓ ${secs.toFixed(1)}s · ${wpm} palavras/minuto`;
+  document.getElementById('sr_btn').textContent='▶ TENTAR DE NOVO'; document.getElementById('sr_btn').onclick=()=>{srTimer=null;startTimer();};
+  document.getElementById('sr_btn').style.background='#E91E8C';
+}
+
+function checkStoryMap() {
+  const answers=['Nina, a coelhinha','Cenoura sumiu','Debaixo do carvalho','De manhã','Ratinho com fome'];
+  let ok=0;
+  for (let i=0;i<5;i++) {
+    const v=(document.getElementById('sm_'+i)?.value||'').trim();
+    if (v.length>2) ok++;
+  }
+  const el=document.getElementById('sm_fb');
+  if (ok>=3) { el.textContent='🗺️ Excelente! Você preencheu o mapa da história!'; el.className='fb-msg ok'; }
+  else { el.textContent='Continue! Tente preencher mais campos do mapa.'; el.className='fb-msg err'; }
+}
+
+const STORY_WORDS = [['DRAGÃO','BISCOITO','MONTANHA'],['FADA','SUBMARINO','PIZZA'],
+  ['ASTRONAUTA','GATO','ARCO-ÍRIS'],['BRUXA','SORVETE','CASTELO'],['ROBÔ','BORBOLETA','OCEANO']];
+function newWords() {
+  const w=STORY_WORDS[Math.floor(Math.random()*STORY_WORDS.length)];
+  document.getElementById('ls_words').innerHTML=w.map(x=>`<span style="background:#EEE6FF;border:2px solid #6C3FC5;border-radius:20px;padding:6px 14px;font-weight:700;color:#6C3FC5">${x}</span>`).join('');
+  document.getElementById('ls_story').value='';
+}
+
+function showNote() {
+  const to=document.getElementById('note_to')?.value||'Alguém especial';
+  const msg=document.getElementById('note_msg')?.value||'...';
+  const div=document.getElementById('note_preview');
+  div.style.display='block';
+  div.innerHTML=`<div style="font-size:.9rem;color:#666;margin-bottom:4px">Para: <b>${to}</b></div>
+    <div style="font-size:1rem;line-height:1.6;color:#333">${msg}</div>
+    <div style="margin-top:10px;font-size:.85rem;color:#FF8C00">Com carinho 💜</div>`;
+}
+
+// ─── COMPLETE ────────────────────────────────────────────────────────────────
+function markDone(num) {
+  if (!done.includes(num)) { done.push(num); stars+=5; }
+  save(); renderList(); launchConfetti();
+  setTimeout(closeModal, 800);
+}
+
+// ─── CONFETTI ────────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const canvas=document.getElementById('confetti');
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  const pieces=Array.from({length:80},()=>({
+    x:Math.random()*canvas.width, y:-10,
+    r:Math.random()*6+3, c:['#6C3FC5','#FFD600','#2ECC71','#FF8C00','#E91E8C'][Math.floor(Math.random()*5)],
+    vx:(Math.random()-.5)*4, vy:Math.random()*4+2, spin:Math.random()*0.2
+  }));
+  let frame; function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{ ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.1; });
+    if (pieces.some(p=>p.y<canvas.height+20)) frame=requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+updateScore(); renderList();
+</script>
+</body>
+</html>
