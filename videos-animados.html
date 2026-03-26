@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12 Vídeos Animados – Do Zero à Leitura em 90 Dias</title>
+<style>
+  :root {
+    --roxo: #6C3FC5;
+    --verde: #3DBE7A;
+    --laranja: #FF8C42;
+    --rosa: #FF6B9D;
+    --amarelo: #FFD166;
+    --azul: #4ECDC4;
+    --bg: #f0eafb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: var(--bg); }
+
+  /* ===== MENU ===== */
+  #menu {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6C3FC5 0%, #4ECDC4 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 30px 20px;
+  }
+  #menu h1 { color: #fff; font-size: 2rem; text-align: center; margin-bottom: 8px; }
+  #menu p { color: rgba(255,255,255,0.85); text-align: center; margin-bottom: 36px; font-size: 1.1rem; }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 900px;
+  }
+  .menu-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  }
+  .menu-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+  .menu-card .num { font-size: 2rem; font-weight: 900; }
+  .menu-card .title { font-size: .9rem; font-weight: 700; text-align: center; color: #333; }
+  .menu-card .badge {
+    font-size: .7rem; padding: 2px 10px; border-radius: 20px; color: #fff; font-weight: 700;
+  }
+  .fase1 { border-top: 5px solid var(--roxo); }
+  .fase2 { border-top: 5px solid var(--verde); }
+  .fase3 { border-top: 5px solid var(--laranja); }
+  .fase4 { border-top: 5px solid var(--rosa); }
+  .fase1 .num { color: var(--roxo); }
+  .fase2 .num { color: var(--verde); }
+  .fase3 .num { color: var(--laranja); }
+  .fase4 .num { color: var(--rosa); }
+  .fase1 .badge { background: var(--roxo); }
+  .fase2 .badge { background: var(--verde); }
+  .fase3 .badge { background: var(--laranja); }
+  .fase4 .badge { background: var(--rosa); }
+
+  /* ===== PLAYER ===== */
+  #player { display: none; position: fixed; inset: 0; background: #000; z-index: 100; }
+  #player.active { display: flex; flex-direction: column; }
+
+  .player-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px;
+    background: rgba(0,0,0,.7);
+    color: #fff;
+    z-index: 10;
+  }
+  .player-top h2 { font-size: 1rem; flex: 1; text-align: center; }
+  .btn-close {
+    background: rgba(255,255,255,.15); border: none; color: #fff;
+    border-radius: 50%; width: 36px; height: 36px; cursor: pointer;
+    font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+  }
+  .btn-close:hover { background: rgba(255,255,255,.3); }
+
+  /* slide area */
+  #slide-area {
+    flex: 1; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 30px 40px;
+    opacity: 0; transform: scale(.95);
+    transition: opacity .6s ease, transform .6s ease;
+    pointer-events: none;
+  }
+  .slide.active { opacity: 1; transform: scale(1); pointer-events: all; }
+  .slide.exit { opacity: 0; transform: scale(1.05); }
+
+  .slide-emoji { font-size: clamp(4rem, 12vw, 7rem); margin-bottom: 20px; animation: bounce 2s infinite; }
+  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  .slide-title { font-size: clamp(1.4rem, 5vw, 2.4rem); font-weight: 900; text-align: center; margin-bottom: 14px; color: #fff; text-shadow: 2px 2px 8px rgba(0,0,0,.4); }
+  .slide-text { font-size: clamp(.9rem, 3vw, 1.2rem); text-align: center; color: rgba(255,255,255,.9); max-width: 650px; line-height: 1.7; }
+  .slide-highlight {
+    background: rgba(255,255,255,.18);
+    border-radius: 16px;
+    padding: 18px 28px;
+    margin-top: 18px;
+    color: #fff;
+    font-size: clamp(.85rem, 2.5vw, 1.1rem);
+    text-align: center;
+    border: 2px solid rgba(255,255,255,.3);
+    max-width: 600px;
+  }
+  .slide-list { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 10px; max-width: 580px; width: 100%; }
+  .slide-list li {
+    background: rgba(255,255,255,.15); border-radius: 12px; padding: 12px 18px;
+    color: #fff; font-size: clamp(.85rem, 2.5vw, 1.05rem); display: flex; align-items: center; gap: 12px;
+    animation: slideInLeft .5s ease both;
+  }
+  .slide-list li span.ico { font-size: 1.4rem; }
+  @keyframes slideInLeft { from { opacity:0; transform: translateX(-30px); } to { opacity:1; transform: translateX(0); } }
+  .slide-list li:nth-child(2) { animation-delay: .1s; }
+  .slide-list li:nth-child(3) { animation-delay: .2s; }
+  .slide-list li:nth-child(4) { animation-delay: .3s; }
+  .slide-list li:nth-child(5) { animation-delay: .4s; }
+
+  /* big letter */
+  .big-letter {
+    font-size: clamp(6rem, 18vw, 10rem);
+    font-weight: 900; color: #fff;
+    text-shadow: 4px 4px 0 rgba(0,0,0,.2);
+    animation: popIn .5s cubic-bezier(.175,.885,.32,1.275);
+    line-height: 1;
+  }
+  @keyframes popIn { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
+
+  /* syllable blocks */
+  .syl-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+  .syl-block {
+    background: rgba(255,255,255,.2); border: 3px solid rgba(255,255,255,.5);
+    border-radius: 16px; padding: 16px 24px;
+    font-size: clamp(1.8rem, 6vw, 3rem); font-weight: 900; color: #fff;
+    animation: popIn .4s ease both;
+    cursor: default;
+    transition: transform .2s, background .2s;
+  }
+  .syl-block:hover { transform: scale(1.1); background: rgba(255,255,255,.35); }
+
+  /* word row */
+  .word-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+  .word-chip {
+    background: rgba(255,255,255,.2); border-radius: 50px;
+    padding: 10px 22px; color: #fff; font-weight: 700;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    animation: popIn .4s ease both;
+  }
+
+  /* progress dots */
+  #progress-dots {
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    padding: 10px;
+    background: rgba(0,0,0,.5);
+  }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(255,255,255,.35); transition: background .3s, transform .3s;
+  }
+  .dot.active { background: #fff; transform: scale(1.3); }
+
+  /* nav controls */
+  .nav-controls {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 12px 16px;
+    background: rgba(0,0,0,.7);
+  }
+  .btn-nav {
+    background: rgba(255,255,255,.15); border: none; color: #fff;
+    border-radius: 50px; padding: 10px 28px; cursor: pointer;
+    font-size: 1rem; font-weight: 700; transition: background .2s;
+  }
+  .btn-nav:hover { background: rgba(255,255,255,.3); }
+  .btn-nav:disabled { opacity: .3; cursor: not-allowed; }
+  #slide-counter { color: rgba(255,255,255,.7); font-size: .9rem; min-width: 70px; text-align: center; }
+
+  /* auto-play bar */
+  #autoplay-bar {
+    height: 4px;
+    background: rgba(255,255,255,.2);
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+  }
+  #autoplay-progress {
+    height: 100%;
+    background: var(--amarelo);
+    width: 0%;
+    transition: width linear;
+  }
+
+  /* floating particles */
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: .35;
+    animation: float-p linear infinite;
+    pointer-events: none;
+  }
+  @keyframes float-p {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: .4; }
+    90% { opacity: .3; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  }
+
+  /* congrats overlay */
+  #congrats {
+    display: none; position: absolute; inset: 0;
+    background: rgba(0,0,0,.8);
+    flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+    z-index: 20;
+  }
+  #congrats.show { display: flex; }
+  #congrats h2 { color: #fff; font-size: 2rem; text-align: center; }
+  #congrats p { color: rgba(255,255,255,.8); text-align: center; }
+  .btn-restart {
+    background: var(--verde); border: none; color: #fff;
+    border-radius: 50px; padding: 14px 36px; font-size: 1.1rem; font-weight: 700;
+    cursor: pointer; margin-top: 10px;
+  }
+  .btn-restart:hover { background: #32a065; }
+
+  /* audio button */
+  .btn-audio {
+    background: rgba(255,255,255,.15); border: none; color: #fff;
+    border-radius: 50%; width: 36px; height: 36px; cursor: pointer;
+    font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .btn-audio:hover { background: rgba(255,255,255,.3); }
+  .btn-audio.muted { background: rgba(255,80,80,.4); }
+
+  /* speaking indicator */
+  #speaking-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: transparent; z-index: 5; pointer-events: none;
+  }
+  #speaking-bar.active {
+    background: linear-gradient(90deg, #FFD166, #FF6B9D, #4ECDC4, #FFD166);
+    background-size: 200% 100%;
+    animation: speakingShimmer 1.5s linear infinite;
+  }
+  @keyframes speakingShimmer { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
+
+  /* canvas for confetti */
+  #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- MENU -->
+<div id="menu">
+  <h1>🎬 12 Vídeos Animados</h1>
+  <p>Do Zero à Leitura em 90 Dias · Toca num vídeo para começar!</p>
+  <div class="menu-grid" id="menu-grid"></div>
+</div>
+
+<!-- PLAYER -->
+<div id="player">
+  <div class="player-top">
+    <button class="btn-close" onclick="closePlayer()">✕</button>
+    <h2 id="player-title">Vídeo</h2>
+    <button class="btn-audio" id="btn-audio" onclick="toggleMute()" title="Ativar/desativar narração">🔊</button>
+  </div>
+
+  <div id="slide-area">
+    <div id="speaking-bar"></div>
+    <div id="autoplay-bar"><div id="autoplay-progress"></div></div>
+    <div id="congrats" class="">
+      <div style="font-size:4rem">🏆</div>
+      <h2>Parabéns!</h2>
+      <p id="congrats-msg">Você assistiu ao vídeo completo!</p>
+      <button class="btn-restart" onclick="restartVideo()">▶ Ver de novo</button>
+      <button class="btn-restart" style="background:var(--roxo)" onclick="closePlayer()">← Menu</button>
+    </div>
+  </div>
+
+  <div id="progress-dots"></div>
+  <div class="nav-controls">
+    <button class="btn-nav" id="btn-prev" onclick="prevSlide()">← Anterior</button>
+    <span id="slide-counter">1 / 5</span>
+    <button class="btn-nav" id="btn-next" onclick="nextSlide()">Próximo →</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// VIDEO DATA
+// ============================================================
+const videos = [
+  // ---- FASE 1: Consciência Fonológica ----
+  {
+    id: 1, fase: 1,
+    title: "O Mundo dos Sons",
+    emoji: "🔊",
+    bg: "linear-gradient(135deg,#6C3FC5,#9B59B6)",
+    slides: [
+      { type:"cover", emoji:"🔊", title:"O Mundo dos Sons", text:"Fase 1 · Consciência Fonológica\nVamos descobrir que tudo ao nosso redor tem som!" },
+      { type:"list", emoji:"👂", title:"Você sabia?", items:[
+        {ico:"🐦", txt:"Os pássaros fazem sons"}, {ico:"🌧", txt:"A chuva faz barulho"},
+        {ico:"🐾", txt:"Animais se comunicam com sons"}, {ico:"👄", txt:"Nós falamos com sons"},
+        {ico:"📚", txt:"Palavras são feitos de sons!"}
+      ]},
+      { type:"big", emoji:"👁", title:"Veja e ouça:", text:"Cada letra representa um SOM", extra:"A • E • I • O • U\nSão os sons mais importantes!" },
+      { type:"syl", emoji:"👏", title:"Bata palmas!", text:"Cada palma = 1 sílaba (1 som)", syls:["bo","la","chu","va","ca","sa"] },
+      { type:"end", emoji:"⭐", title:"Muito bem!", text:"Agora você sabe que palavras são feitas de sons!\nNa próxima atividade vamos brincar com eles.", badge:"Fase 1 · Concluída" }
+    ]
+  },
+  {
+    id: 2, fase: 1,
+    title: "Rimas e Brincadeiras",
+    emoji: "🎵",
+    bg: "linear-gradient(135deg,#8B44CC,#5B2EA6)",
+    slides: [
+      { type:"cover", emoji:"🎵", title:"Rimas e Brincadeiras", text:"Fase 1 · Consciência Fonológica\nPalavras que terminam igual fazem rima — é divertido!" },
+      { type:"text", emoji:"🤔", title:"O que é uma rima?", text:"Quando duas palavras terminam com o mesmo som, elas RIMAM!", highlight:"GATO rima com PATO\nBOLA rima com ESCOLA\nCASA rima com MASA" },
+      { type:"list", emoji:"🌟", title:"Exemplos de rimas:", items:[
+        {ico:"🐱", txt:"GATO · PATO · RATO"}, {ico:"⚽", txt:"BOLA · ESCOLA · COLA"},
+        {ico:"🌙", txt:"LUA · RUA · PUA"}, {ico:"🦋", txt:"FLOR · COR · DOR"},
+        {ico:"🍎", txt:"MAÇÃ · IRMÃ · AMANHÃ"}
+      ]},
+      { type:"syl", emoji:"🎤", title:"Complete a rima!", text:"Pinto que chora... rima com AURORA!\nBiscoito com leite... rima com AZEITE!", syls:["ga","to","pa","to","ra","to"] },
+      { type:"end", emoji:"🏅", title:"Parabéns!", text:"Você descobriu o segredo das rimas!\nRimar ajuda seu cérebro a reconhecer sons.", badge:"Rimas · Dominadas!" }
+    ]
+  },
+  {
+    id: 3, fase: 1,
+    title: "Sílabas: O Ritmo das Palavras",
+    emoji: "🥁",
+    bg: "linear-gradient(135deg,#A044DD,#6C3FC5)",
+    slides: [
+      { type:"cover", emoji:"🥁", title:"Sílabas: O Ritmo das Palavras", text:"Fase 1 · Consciência Fonológica\nToda palavra tem um ritmo escondido!" },
+      { type:"text", emoji:"✂️", title:"O que são sílabas?", text:"Sílabas são os pedacinhos em que dividimos as palavras quando falamos.", highlight:"CA – SA (2 sílabas)\nBO – RA – BO – RA (4 sílabas)\nA – VIÃ (3 sílabas)" },
+      { type:"syl", emoji:"👐", title:"Vamos dividir juntos!", text:"Bata palma para cada sílaba:", syls:["CA","SA","BO","IA","CA","DER","NO"] },
+      { type:"list", emoji:"📏", title:"Palavras por tamanho:", items:[
+        {ico:"1️⃣", txt:"1 sílaba: PÃO, MÃE, CÉU, SOL"},
+        {ico:"2️⃣", txt:"2 sílabas: CA-SA, ME-SA, BO-LA"},
+        {ico:"3️⃣", txt:"3 sílabas: CA-DER-NO, TER-CE-TOS"},
+        {ico:"4️⃣", txt:"4+ sílabas: HI-PO-PÓ-TA-MO"}
+      ]},
+      { type:"end", emoji:"🎉", title:"Ritmo Perfeito!", text:"Ótimo! Agora você consegue sentir o ritmo das palavras.\nIsso vai ajudar muito na leitura!", badge:"Sílabas · Dominadas!" }
+    ]
+  },
+
+  // ---- FASE 2: Alfabeto ----
+  {
+    id: 4, fase: 2,
+    title: "Conhecendo as Letras",
+    emoji: "🔤",
+    bg: "linear-gradient(135deg,#3DBE7A,#27AE60)",
+    slides: [
+      { type:"cover", emoji:"🔤", title:"Conhecendo as Letras", text:"Fase 2 · O Alfabeto\nO alfabeto tem 26 letras — cada uma tem um nome e um som!" },
+      { type:"text", emoji:"🌈", title:"As Vogais – 5 Estrelas!", text:"As vogais são as letras mais importantes!\nToda sílaba tem pelo menos uma vogal.", highlight:"A  ·  E  ·  I  ·  O  ·  U\n5 vogais que formam o coração das palavras" },
+      { type:"list", emoji:"🔡", title:"Grupos do Alfabeto:", items:[
+        {ico:"🌟", txt:"Vogais: A, E, I, O, U"},
+        {ico:"📝", txt:"Consoantes: todas as outras 21 letras"},
+        {ico:"🔗", txt:"Juntas formam sílabas e palavras"},
+        {ico:"📚", txt:"Com 26 letras formamos TODAS as palavras!"}
+      ]},
+      { type:"syl", emoji:"✏️", title:"Escreva no ar!", text:"Desenhe cada letra com o dedo:", syls:["A","B","C","D","E","F","G"] },
+      { type:"end", emoji:"📖", title:"Parabéns Leitor!", text:"Você está conhecendo o alfabeto!\nContinue praticando as letras todo dia.", badge:"Fase 2 · Iniciada!" }
+    ]
+  },
+  {
+    id: 5, fase: 2,
+    title: "Vogais Mágicas",
+    emoji: "✨",
+    bg: "linear-gradient(135deg,#27AE60,#1E8449)",
+    slides: [
+      { type:"cover", emoji:"✨", title:"Vogais Mágicas", text:"Fase 2 · O Alfabeto\nAs vogais são mágicas porque aparecem em quase todas as palavras!" },
+      { type:"big", emoji:"🌟", title:"As 5 Vogais:", text:"Cada uma tem um som único\nRepita em voz alta!", extra:"A – E – I – O – U" },
+      { type:"list", emoji:"🔍", title:"Vogais em palavras:", items:[
+        {ico:"🍎", txt:"A de ABACAXI, ABELHA, AMOR"},
+        {ico:"⭐", txt:"E de ELEFANTE, ESCOLA, ESTRELA"},
+        {ico:"🦎", txt:"I de IGUANA, ILHA, INVERNO"},
+        {ico:"🥚", txt:"O de OVO, ÓCULOS, OURIÇO"},
+        {ico:"🦄", txt:"U de UVA, URSO, UNICÓRNIO"}
+      ]},
+      { type:"syl", emoji:"🎯", title:"Encontre a vogal!", text:"Qual vogal está escondida nas sílabas?", syls:["ba","ce","di","fo","mu","la"] },
+      { type:"end", emoji:"💫", title:"Vogais Dominadas!", text:"Excelente! As vogais são seus melhores amigos na leitura.\nProcure-as em todas as palavras!", badge:"Vogais · Dominadas!" }
+    ]
+  },
+  {
+    id: 6, fase: 2,
+    title: "Consoantes em Ação",
+    emoji: "💪",
+    bg: "linear-gradient(135deg,#2ECC71,#3DBE7A)",
+    slides: [
+      { type:"cover", emoji:"💪", title:"Consoantes em Ação", text:"Fase 2 · O Alfabeto\n21 consoantes cheias de personalidade!" },
+      { type:"text", emoji:"🤝", title:"Vogais + Consoantes = Sílabas!", text:"As consoantes precisam das vogais para formar sílabas.\nSozinhas elas 'travam' — juntas elas voam!", highlight:"B + A = BA\nC + A = CA\nM + A = MA\nP + A = PA" },
+      { type:"list", emoji:"🎯", title:"Consoantes divertidas:", items:[
+        {ico:"🐝", txt:"B de BOLA, BORBOLETA, BEBÊ"},
+        {ico:"🏠", txt:"C de CASA, CAMA, CAVALO"},
+        {ico:"🐶", txt:"D de DADO, DINOSSAURO, DOCE"},
+        {ico:"🌸", txt:"F de FLOR, FADA, FELIZ"},
+        {ico:"🐱", txt:"G de GATO, GIRAFA, GELEIA"}
+      ]},
+      { type:"syl", emoji:"🔗", title:"Una a consoante à vogal!", text:"Consoante + Vogal = Sílaba!", syls:["BA","BE","BI","BO","BU","MA","ME"] },
+      { type:"end", emoji:"🏆", title:"Alfabeto Completo!", text:"Você conhece vogais e consoantes!\nAgora é hora de juntar tudo em sílabas.", badge:"Fase 2 · Concluída!" }
+    ]
+  },
+
+  // ---- FASE 3: Sílabas ----
+  {
+    id: 7, fase: 3,
+    title: "Famílias Silábicas",
+    emoji: "👨‍👩‍👧‍👦",
+    bg: "linear-gradient(135deg,#FF8C42,#E67E22)",
+    slides: [
+      { type:"cover", emoji:"👨‍👩‍👧‍👦", title:"Famílias Silábicas", text:"Fase 3 · Sílabas\nCada consoante tem uma família com as 5 vogais!" },
+      { type:"text", emoji:"🏠", title:"A Família do B:", text:"Quando 'B' se encontra com cada vogal, forma uma família de sílabas!", highlight:"BA · BE · BI · BO · BU\nComo uma família feliz!" },
+      { type:"syl", emoji:"🎪", title:"Família do M:", text:"Repita cada sílaba em voz alta:", syls:["MA","ME","MI","MO","MU"] },
+      { type:"list", emoji:"📋", title:"Famílias para aprender:", items:[
+        {ico:"1️⃣", txt:"Família do P: PA, PE, PI, PO, PU"},
+        {ico:"2️⃣", txt:"Família do C: CA, CE, CI, CO, CU"},
+        {ico:"3️⃣", txt:"Família do T: TA, TE, TI, TO, TU"},
+        {ico:"4️⃣", txt:"Família do L: LA, LE, LI, LO, LU"},
+        {ico:"5️⃣", txt:"Família do S: SA, SE, SI, SO, SU"}
+      ]},
+      { type:"end", emoji:"🌈", title:"Família Reunida!", text:"Agora você conhece as famílias silábicas!\nPratique uma família por dia.", badge:"Fase 3 · Iniciada!" }
+    ]
+  },
+  {
+    id: 8, fase: 3,
+    title: "Formando Palavras",
+    emoji: "🧩",
+    bg: "linear-gradient(135deg,#E67E22,#D35400)",
+    slides: [
+      { type:"cover", emoji:"🧩", title:"Formando Palavras", text:"Fase 3 · Sílabas\nVamos juntar sílabas para formar palavras reais!" },
+      { type:"text", emoji:"🔧", title:"Como formar palavras:", text:"É como montar um quebra-cabeça!\nCada peça (sílaba) se encaixa na outra.", highlight:"BA + LA = BALA 🍬\nBO + LA = BOLA ⚽\nCA + SA = CASA 🏠" },
+      { type:"syl", emoji:"✨", title:"Monte estas palavras:", text:"Junte as sílabas e leia em voz alta!", syls:["ME","LA","CA","MA","SA","PO","TU","BA"] },
+      { type:"list", emoji:"📖", title:"Palavras para praticar:", items:[
+        {ico:"🍌", txt:"BA-NA-NA → BANANA"},
+        {ico:"🚗", txt:"CA-RRO → CARRO"},
+        {ico:"🌳", txt:"ÁR-VO-RE → ÁRVORE"},
+        {ico:"🎈", txt:"BA-LÃO → BALÃO"},
+        {ico:"🐟", txt:"PEI-XE → PEIXE"}
+      ]},
+      { type:"end", emoji:"🎊", title:"Você está lendo!", text:"Incrível! Você já consegue formar palavras!\nContinue praticando — você está quase lá!", badge:"Palavras · Formadas!" }
+    ]
+  },
+  {
+    id: 9, fase: 3,
+    title: "Lendo Frases Curtas",
+    emoji: "📝",
+    bg: "linear-gradient(135deg,#FF7043,#FF8C42)",
+    slides: [
+      { type:"cover", emoji:"📝", title:"Lendo Frases Curtas", text:"Fase 3 · Sílabas\nAgora vamos juntar palavras e formar frases!" },
+      { type:"text", emoji:"💡", title:"Frase = Palavras Juntas!", text:"Quando colocamos palavras em ordem, formamos uma frase com significado!", highlight:"O GATO dorme.\nA BOLA é bonita.\nEu AMO minha família." },
+      { type:"list", emoji:"🌟", title:"Frases para ler:", items:[
+        {ico:"☀️", txt:"O SOL brilha no céu."},
+        {ico:"🐟", txt:"O PEIXE nada no mar."},
+        {ico:"🐕", txt:"O CÃOZINHO late e corre."},
+        {ico:"🍎", txt:"A MAÇÃ é vermelha e doce."},
+        {ico:"🏡", txt:"A minha CASA é quentinha."}
+      ]},
+      { type:"words", emoji:"✍️", title:"Sua primeira leitura!", text:"Leia devagar, sílaba por sílaba:", words:["Eu", "sei", "ler", "frases!"] },
+      { type:"end", emoji:"🥳", title:"Leitor de Frases!", text:"Você leu frases completas!\nIsso é muito especial. Continue assim!", badge:"Fase 3 · Concluída!" }
+    ]
+  },
+
+  // ---- FASE 4: Fluência ----
+  {
+    id: 10, fase: 4,
+    title: "Lendo com Expressão",
+    emoji: "🎭",
+    bg: "linear-gradient(135deg,#FF6B9D,#E91E8C)",
+    slides: [
+      { type:"cover", emoji:"🎭", title:"Lendo com Expressão", text:"Fase 4 · Fluência\nLer bem significa sentir as emoções do texto!" },
+      { type:"text", emoji:"😊", title:"O que é expressão?", text:"Quando você lê com expressão, você usa a voz para mostrar os sentimentos do texto!", highlight:"❓ Perguntas: voz sobe\n❗ Surpresa: voz animada\n😢 Tristeza: voz mais baixa\n😄 Alegria: voz feliz" },
+      { type:"list", emoji:"🎤", title:"Dicas para ler com expressão:", items:[
+        {ico:"⏸", txt:"Pause nas vírgulas e pontos"},
+        {ico:"📢", txt:"Fale mais alto nas palavras importantes"},
+        {ico:"🐢", txt:"Leia devagar quando for triste"},
+        {ico:"🐇", txt:"Acelere em partes emocionantes"},
+        {ico:"🎭", txt:"Imite os personagens!"}
+      ]},
+      { type:"words", emoji:"📖", title:"Leia com expressão:", words:["Era", "uma", "vez...", "🌟", "uma", "criança", "muito", "corajosa!"] },
+      { type:"end", emoji:"🌟", title:"Leitor Expressivo!", text:"Você aprendeu a dar vida às palavras!\nLeitura expressiva faz as histórias ganharem vida.", badge:"Fase 4 · Iniciada!" }
+    ]
+  },
+  {
+    id: 11, fase: 4,
+    title: "Compreensão Leitora",
+    emoji: "🧠",
+    bg: "linear-gradient(135deg,#E91E8C,#C2185B)",
+    slides: [
+      { type:"cover", emoji:"🧠", title:"Compreensão Leitora", text:"Fase 4 · Fluência\nLer é entender — não apenas pronunciar as palavras!" },
+      { type:"text", emoji:"🔍", title:"Perguntas mágicas:", text:"Após ler um texto, responda estas perguntas mágicas para mostrar que entendeu!", highlight:"👤 QUEM? (personagens)\n📍 ONDE? (lugar)\n⏰ QUANDO? (tempo)\n📋 O QUÊ? (o que aconteceu)\n❓ POR QUÊ? (razão)" },
+      { type:"list", emoji:"📚", title:"Como compreender melhor:", items:[
+        {ico:"👀", txt:"Leia todo o texto antes de responder"},
+        {ico:"✏️", txt:"Sublinhe as partes importantes"},
+        {ico:"🖼", txt:"Visualize a história na sua mente"},
+        {ico:"🔄", txt:"Releia se não entendeu"},
+        {ico:"💬", txt:"Conte a história com suas palavras"}
+      ]},
+      { type:"words", emoji:"📖", title:"Mini história:", words:["A", "LECA", "achou", "um", "livro", "mágico.", "Ela", "leu", "e", "voou!"] },
+      { type:"end", emoji:"🎓", title:"Leitor Compreensivo!", text:"Agora você sabe que ler é entender!\nUse as perguntas mágicas sempre que ler.", badge:"Compreensão · Dominada!" }
+    ]
+  },
+  {
+    id: 12, fase: 4,
+    title: "Você é um Leitor!",
+    emoji: "🏆",
+    bg: "linear-gradient(135deg,#FF6B9D,#9B59B6)",
+    slides: [
+      { type:"cover", emoji:"🏆", title:"Você é um Leitor!", text:"Fase 4 · Fluência · FINAL\nParabéns pela incrível jornada de 90 dias!" },
+      { type:"list", emoji:"🌟", title:"O que você aprendeu:", items:[
+        {ico:"🔊", txt:"Fase 1: Sons, rimas e sílabas"},
+        {ico:"🔤", txt:"Fase 2: O alfabeto completo"},
+        {ico:"📝", txt:"Fase 3: Sílabas, palavras e frases"},
+        {ico:"📖", txt:"Fase 4: Leitura fluente e expressiva"}
+      ]},
+      { type:"text", emoji:"💝", title:"Uma mensagem especial:", text:"Você começou do ZERO e chegou à LEITURA!\nIsso é extraordinário. Você é incrível!", highlight:"📚 Continue lendo todo dia!\nEm 1 ano você vai ler qualquer livro." },
+      { type:"syl", emoji:"🎉", title:"Seu novo superpoder:", text:"Você agora tem um superpoder chamado LEITURA!", syls:["📚","✨","🌟","🏆","💫","🎊"] },
+      { type:"end", emoji:"🦉", title:"Do Zero à Leitura!", text:"Missão cumprida!\nLeco o Corujinho está muito orgulhoso de você.", badge:"🏆 Leitor Completo!" }
+    ]
+  }
+];
+
+// ============================================================
+// MENU RENDER
+// ============================================================
+const faseNames = {1:"Fase 1", 2:"Fase 2", 3:"Fase 3", 4:"Fase 4"};
+const menuGrid = document.getElementById("menu-grid");
+videos.forEach(v => {
+  const card = document.createElement("div");
+  card.className = `menu-card fase${v.fase}`;
+  card.innerHTML = `
+    <div class="num">${v.emoji}</div>
+    <div class="title">Vídeo ${v.id} · ${v.title}</div>
+    <div class="badge">${faseNames[v.fase]}</div>
+  `;
+  card.onclick = () => openVideo(v.id);
+  menuGrid.appendChild(card);
+});
+
+// ============================================================
+// SPEECH SYNTHESIS
+// ============================================================
+let isMuted = false;
+let voices = [];
+
+// Load voices (async on some browsers)
+function loadVoices() {
+  voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+}
+if (window.speechSynthesis) {
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  const btn = document.getElementById("btn-audio");
+  btn.textContent = isMuted ? "🔇" : "🔊";
+  btn.classList.toggle("muted", isMuted);
+  if (isMuted) {
+    window.speechSynthesis && window.speechSynthesis.cancel();
+    document.getElementById("speaking-bar").classList.remove("active");
+  } else {
+    // Speak current slide when unmuting
+    if (currentVideo) speakSlide(currentVideo.slides[currentSlideIndex]);
+  }
+}
+
+function speakSlide(s) {
+  if (isMuted || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+
+  // Build narration text
+  let parts = [s.title];
+  if (s.text)      parts.push(s.text.replace(/\n/g, ". "));
+  if (s.highlight) parts.push(s.highlight.replace(/\n/g, ". ").replace(/[·•]/g, ","));
+  if (s.extra)     parts.push(s.extra.replace(/[·•–]/g, ",").replace(/\n/g, ". "));
+  if (s.items)     parts.push(s.items.map(i => i.txt).join(". "));
+  if (s.syls && s.syls.every(sy => /^[A-ZÀ-Ú]{1,3}$/i.test(sy.replace(/[^\w]/g,""))))
+                   parts.push("Repita: " + s.syls.join(", "));
+  if (s.words)     parts.push("Leia: " + s.words.filter(w => !/^\p{Emoji}$/u.test(w)).join(" "));
+  if (s.badge)     parts.push(s.badge.replace(/[🏆⭐🏅💫🌟]/g, ""));
+
+  const text = parts.join(". ").replace(/\s+/g, " ").trim();
+  if (!text) return;
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "pt-BR";
+  utter.rate = 0.88;
+  utter.pitch = 1.1;
+  utter.volume = 1;
+
+  // Prefer a PT-BR voice
+  const ptVoice = voices.find(v => v.lang === "pt-BR") ||
+                  voices.find(v => v.lang.startsWith("pt")) || null;
+  if (ptVoice) utter.voice = ptVoice;
+
+  const bar = document.getElementById("speaking-bar");
+  utter.onstart  = () => bar.classList.add("active");
+  utter.onend    = () => bar.classList.remove("active");
+  utter.onerror  = () => bar.classList.remove("active");
+
+  window.speechSynthesis.speak(utter);
+}
+
+function stopSpeech() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  document.getElementById("speaking-bar").classList.remove("active");
+}
+
+// ============================================================
+// PLAYER STATE
+// ============================================================
+let currentVideo = null;
+let currentSlideIndex = 0;
+let autoTimer = null;
+let progressTimer = null;
+const SLIDE_DURATION = 10000; // 10s per slide (more time for narration)
+
+function openVideo(id) {
+  currentVideo = videos.find(v => v.id === id);
+  currentSlideIndex = 0;
+  document.getElementById("menu").style.display = "none";
+  const player = document.getElementById("player");
+  player.classList.add("active");
+  player.style.display = "flex";
+  document.getElementById("player-title").textContent = `${currentVideo.emoji} Vídeo ${id}: ${currentVideo.title}`;
+  document.getElementById("congrats").classList.remove("show");
+  // Reset mute button
+  document.getElementById("btn-audio").textContent = "🔊";
+  document.getElementById("btn-audio").classList.remove("muted");
+  isMuted = false;
+  renderSlides();
+  buildDots();
+  showSlide(0);
+  spawnParticles();
+}
+
+function closePlayer() {
+  stopAutoPlay();
+  stopSpeech();
+  document.getElementById("player").classList.remove("active");
+  document.getElementById("player").style.display = "none";
+  document.getElementById("menu").style.display = "flex";
+  clearParticles();
+}
+
+function restartVideo() {
+  document.getElementById("congrats").classList.remove("show");
+  currentSlideIndex = 0;
+  showSlide(0);
+  spawnParticles();
+}
+
+// ============================================================
+// SLIDE RENDERING
+// ============================================================
+function renderSlides() {
+  const area = document.getElementById("slide-area");
+  // remove old slides
+  area.querySelectorAll(".slide").forEach(s => s.remove());
+
+  currentVideo.slides.forEach((s, i) => {
+    const div = document.createElement("div");
+    div.className = "slide";
+    div.id = `slide-${i}`;
+    div.style.background = currentVideo.bg;
+    div.innerHTML = buildSlideHTML(s);
+    area.appendChild(div);
+  });
+}
+
+function buildSlideHTML(s) {
+  switch(s.type) {
+    case "cover":
+      return `<div class="slide-emoji">${s.emoji}</div>
+              <div class="slide-title">${s.title}</div>
+              <div class="slide-text" style="white-space:pre-line">${s.text}</div>`;
+    case "text":
+      return `<div class="slide-emoji">${s.emoji}</div>
+              <div class="slide-title">${s.title}</div>
+              <div class="slide-text">${s.text}</div>
+              ${s.highlight ? `<div class="slide-highlight" style="white-space:pre-line">${s.highlight}</div>` : ""}`;
+    case "big":
+      return `<div class="slide-emoji">${s.emoji}</div>
+              <div class="slide-title">${s.title}</div>
+              <div class="slide-text">${s.text}</div>
+              <div class="big-letter">${s.extra || ""}</div>`;
+    case "list":
+      const items = s.items.map((it,idx) => `<li style="animation-delay:${idx*0.1}s"><span class="ico">${it.ico}</span>${it.txt}</li>`).join("");
+      return `<div class="slide-emoji">${s.emoji}</div>
+              <div class="slide-title">${s.title}</div>
+              <ul class="slide-list">${items}</ul>`;
+    case "syl":
+      const sylBlocks = s.syls.map((sy,i) => `<div class="syl-block" style="animation-delay:${i*0.08}s">${sy}</div>`).join("");
+      return `<div class="slide-emoji">${s.emoji}</div>
+              <div class="slide-title">${s.title}</div>
+              <div class="slide-text">${s.text}</div>
+              <div class="syl-row">${sylBlocks}</div>`;
+    case "words":
+      const wordChips = s.words.map((w,i) => `<div class="word-chip" style="animation-delay:${i*0.1}s">${w}</div>`).join("");
+      return `<div class="slide-emoji">${s.emoji}</div>
+              <div class="slide-title">${s.title}</div>
+              <div class="slide-text">${s.text}</div>
+              <div class="word-row">${wordChips}</div>`;
+    case "end":
+      return `<div class="slide-emoji">${s.emoji}</div>
+              <div class="slide-title">${s.title}</div>
+              <div class="slide-text">${s.text}</div>
+              ${s.badge ? `<div class="slide-highlight" style="font-size:1.2rem;font-weight:900">${s.badge}</div>` : ""}`;
+    default:
+      return `<div class="slide-title">${s.title}</div>`;
+  }
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function buildDots() {
+  const container = document.getElementById("progress-dots");
+  container.innerHTML = "";
+  currentVideo.slides.forEach((_, i) => {
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    dot.id = `dot-${i}`;
+    dot.onclick = () => showSlide(i);
+    container.appendChild(dot);
+  });
+}
+
+function showSlide(idx) {
+  stopAutoPlay();
+  stopSpeech();
+  const slides = document.querySelectorAll(".slide");
+  slides.forEach((s, i) => {
+    s.classList.remove("active", "exit");
+    if (i === idx) s.classList.add("active");
+  });
+  document.querySelectorAll(".dot").forEach((d, i) => {
+    d.classList.toggle("active", i === idx);
+  });
+  currentSlideIndex = idx;
+  const total = currentVideo.slides.length;
+  document.getElementById("slide-counter").textContent = `${idx + 1} / ${total}`;
+  document.getElementById("btn-prev").disabled = idx === 0;
+  document.getElementById("btn-next").disabled = idx === total - 1;
+  // Narrate after a brief delay so animation plays first
+  setTimeout(() => speakSlide(currentVideo.slides[idx]), 600);
+  startAutoPlay();
+}
+
+function nextSlide() {
+  const total = currentVideo.slides.length;
+  if (currentSlideIndex < total - 1) {
+    showSlide(currentSlideIndex + 1);
+  } else {
+    stopAutoPlay();
+    document.getElementById("congrats").classList.add("show");
+    launchConfetti();
+  }
+}
+
+function prevSlide() {
+  if (currentSlideIndex > 0) showSlide(currentSlideIndex - 1);
+}
+
+// ============================================================
+// AUTO-PLAY
+// ============================================================
+function startAutoPlay() {
+  const bar = document.getElementById("autoplay-progress");
+  bar.style.transition = "none";
+  bar.style.width = "0%";
+  setTimeout(() => {
+    bar.style.transition = `width ${SLIDE_DURATION}ms linear`;
+    bar.style.width = "100%";
+  }, 50);
+  autoTimer = setTimeout(() => nextSlide(), SLIDE_DURATION);
+}
+
+function stopAutoPlay() {
+  if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+  const bar = document.getElementById("autoplay-progress");
+  if (bar) { bar.style.transition = "none"; bar.style.width = "0%"; }
+}
+
+// ============================================================
+// PARTICLES
+// ============================================================
+const particlePool = [];
+function spawnParticles() {
+  clearParticles();
+  const area = document.getElementById("slide-area");
+  const colors = ["#FF6B9D","#FFD166","#4ECDC4","#FF8C42","#6C3FC5","#3DBE7A"];
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    const size = Math.random() * 20 + 10;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      left:${Math.random()*100}%;
+      animation-duration:${Math.random()*8+6}s;
+      animation-delay:${Math.random()*5}s;
+    `;
+    area.appendChild(p);
+    particlePool.push(p);
+  }
+}
+function clearParticles() {
+  particlePool.forEach(p => p.remove());
+  particlePool.length = 0;
+}
+
+// ============================================================
+// CONFETTI
+// ============================================================
+const canvas = document.getElementById("confetti-canvas");
+const ctx = canvas.getContext("2d");
+let confettiParticles = [];
+let animId = null;
+
+function launchConfetti() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  confettiParticles = [];
+  const colors = ["#FF6B9D","#FFD166","#4ECDC4","#FF8C42","#6C3FC5","#3DBE7A","#fff"];
+  for (let i = 0; i < 150; i++) {
+    confettiParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      w: Math.random() * 12 + 4,
+      h: Math.random() * 6 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      speed: Math.random() * 4 + 2,
+      rotSpeed: (Math.random() - 0.5) * 4,
+      drift: (Math.random() - 0.5) * 2
+    });
+  }
+  if (animId) cancelAnimationFrame(animId);
+  animateConfetti();
+  setTimeout(() => { cancelAnimationFrame(animId); ctx.clearRect(0, 0, canvas.width, canvas.height); }, 4000);
+}
+
+function animateConfetti() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  confettiParticles.forEach(p => {
+    p.y += p.speed;
+    p.x += p.drift;
+    p.rotation += p.rotSpeed;
+    ctx.save();
+    ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+    ctx.rotate(p.rotation * Math.PI / 180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    ctx.restore();
+  });
+  confettiParticles = confettiParticles.filter(p => p.y < canvas.height + 20);
+  if (confettiParticles.length > 0) animId = requestAnimationFrame(animateConfetti);
+}
+
+// Keyboard navigation
+document.addEventListener("keydown", e => {
+  if (!currentVideo) return;
+  if (e.key === "ArrowRight" || e.key === " ") nextSlide();
+  if (e.key === "ArrowLeft") prevSlide();
+  if (e.key === "Escape") closePlayer();
+});
+
+// Touch swipe
+let touchStartX = 0;
+document.getElementById("slide-area").addEventListener("touchstart", e => { touchStartX = e.touches[0].clientX; });
+document.getElementById("slide-area").addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -50) nextSlide();
+  if (dx > 50) prevSlide();
+});
+</script>
+</body>
+</html>
