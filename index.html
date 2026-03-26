@@ -112,12 +112,13 @@
   }
   .section-title .line { flex: 1; height: 2px; background: var(--beige3); border-radius: 2px; }
   .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 280px));
+    display: flex;
+    flex-wrap: wrap;
     gap: 18px;
     justify-content: center;
   }
   .card {
+    width: 280px;
     background: var(--white);
     border-radius: 22px;
     padding: 26px;
